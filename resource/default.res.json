@@ -1,0 +1,25 @@
+{
+  "groups": [
+    {
+      "keys": "background,hero1,hero2",
+      "name": "preload"
+    }
+  ],
+  "resources": [
+    {
+      "name": "background",
+      "type": "image",
+      "url": "assets/background.png"
+    },
+    {
+      "name": "hero1",
+      "type": "image",
+      "url": "assets/hero1.png"
+    },
+    {
+      "name": "hero2",
+      "type": "image",
+      "url": "assets/hero2.png"
+    }
+  ]
+}

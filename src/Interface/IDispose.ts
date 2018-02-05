@@ -1,0 +1,3 @@
+interface IDispose{
+  dispose():void;
+}
