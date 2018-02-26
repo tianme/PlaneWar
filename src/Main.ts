@@ -29,6 +29,7 @@
 
 class Main extends egret.DisplayObjectContainer {
   private hero :Hero;
+  private bgContent: BgContent;
   public constructor() {
     super();
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
@@ -46,10 +47,13 @@ class Main extends egret.DisplayObjectContainer {
 
     egret.lifecycle.onPause = () => {
       egret.ticker.pause();
+      Utils.soundStop(this.bgContent);
+
     };
 
     egret.lifecycle.onResume = () => {
       egret.ticker.resume();
+      Utils.soundPlay(this.bgContent);
     };
 
     this.runGame().catch(e => {
@@ -60,6 +64,7 @@ class Main extends egret.DisplayObjectContainer {
   private async runGame() {
     await this.loadResource();
     this.hero = new Hero(1);
+    this.bgContent = new BgContent();
     this.createGameScene();
     // const result = await RES.getResAsync("description_json")
     // this.startAnimation(result);
@@ -73,7 +78,8 @@ class Main extends egret.DisplayObjectContainer {
       const loadingView = new LoadingUI();
       this.stage.addChild(loadingView);
       await RES.loadConfig('resource/default.res.json', 'resource/');
-      await RES.loadGroup('preload', 0, loadingView);
+      await RES.loadGroup('images', 0, loadingView);
+      await RES.loadGroup('sounds', 0, loadingView);
       this.stage.removeChild(loadingView);
     } catch (e) {
       console.error(e);
@@ -86,7 +92,7 @@ class Main extends egret.DisplayObjectContainer {
    * Create a game scene
    */
   private createGameScene() {
-    const bgContent = new BgContent();
+    const bgContent = this.bgContent;
     this.addChild(bgContent);
 
     const hero: PlaneBase = this.hero;

@@ -79,6 +79,7 @@ var Main = (function (_super) {
         return _this;
     }
     Main.prototype.onAddToStage = function (event) {
+        var _this = this;
         egret.lifecycle.addLifecycleListener(function (context) {
             // custom lifecycle plugin
             context.onUpdate = function () {
@@ -87,9 +88,11 @@ var Main = (function (_super) {
         });
         egret.lifecycle.onPause = function () {
             egret.ticker.pause();
+            Utils.soundStop(_this.bgContent);
         };
         egret.lifecycle.onResume = function () {
             egret.ticker.resume();
+            Utils.soundPlay(_this.bgContent);
         };
         this.runGame().catch(function (e) {
             console.log(e);
@@ -104,6 +107,7 @@ var Main = (function (_super) {
                     case 1:
                         _a.sent();
                         this.hero = new Hero(1);
+                        this.bgContent = new BgContent();
                         this.createGameScene();
                         // const result = await RES.getResAsync("description_json")
                         // this.startAnimation(result);
@@ -127,22 +131,25 @@ var Main = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 3, , 4]);
+                        _a.trys.push([0, 4, , 5]);
                         loadingView = new LoadingUI();
                         this.stage.addChild(loadingView);
                         return [4 /*yield*/, RES.loadConfig('resource/default.res.json', 'resource/')];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, RES.loadGroup('preload', 0, loadingView)];
+                        return [4 /*yield*/, RES.loadGroup('images', 0, loadingView)];
                     case 2:
                         _a.sent();
-                        this.stage.removeChild(loadingView);
-                        return [3 /*break*/, 4];
+                        return [4 /*yield*/, RES.loadGroup('sounds', 0, loadingView)];
                     case 3:
+                        _a.sent();
+                        this.stage.removeChild(loadingView);
+                        return [3 /*break*/, 5];
+                    case 4:
                         e_1 = _a.sent();
                         console.error(e_1);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -153,7 +160,7 @@ var Main = (function (_super) {
      */
     Main.prototype.createGameScene = function () {
         var _this = this;
-        var bgContent = new BgContent();
+        var bgContent = this.bgContent;
         this.addChild(bgContent);
         var hero = this.hero;
         this.addEventListener(HeroInStageRunBgEvent.HeroInStageRunBgEvent, function (event) {

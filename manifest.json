@@ -17,6 +17,7 @@
 		"bin-debug/Event/HeroInStageRunBgEvent.js",
 		"bin-debug/Main.js",
 		"bin-debug/Interface/IFly.js",
+		"bin-debug/Interface/ISound.js",
 		"bin-debug/Interface/IStageInfo.js",
 		"bin-debug/Plane/Hero.js",
 		"bin-debug/LoadingUI.js",

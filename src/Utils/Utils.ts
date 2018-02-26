@@ -13,4 +13,12 @@ class Utils {
   public static move(obj: PlaneBase, stageInfo: IStageInfo) {
     obj.move(stageInfo);
   }
+  // 停止声音
+  public static soundStop(obj: ISound){
+    obj.stop();
+  }
+  // 开启声音
+  public static soundPlay(obj: ISound){
+    obj.play();
+  }
 }

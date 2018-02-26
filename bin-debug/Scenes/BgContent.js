@@ -14,7 +14,9 @@ var BgContent = (function (_super) {
         var _this = _super.call(this) || this;
         _this.bgUp = new egret.Bitmap();
         _this.bgDown = new egret.Bitmap();
+        _this.channelPosition = 0;
         var texture = Utils.createBitmapByName('background');
+        _this.bgSound = RES.getRes('bgsound');
         _this.bgUp.texture = texture;
         _this.bgDown.texture = texture;
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
@@ -34,6 +36,7 @@ var BgContent = (function (_super) {
         this.bgDown.y = 0;
         this.addChild(this.bgUp);
         this.addChild(this.bgDown);
+        this.play();
     };
     BgContent.prototype.runBg = function () {
         this.addEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
@@ -49,6 +52,19 @@ var BgContent = (function (_super) {
         this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
         this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
     };
+    BgContent.prototype.play = function () {
+        console.log(this.channelPosition);
+        this.soundChannel = this.bgSound.play(this.channelPosition, -1);
+    };
+    BgContent.prototype.stop = function () {
+        if (!this.soundChannel) {
+            return;
+        }
+        // 记录背景音乐播放的位置
+        this.channelPosition = this.soundChannel.position;
+        // 停止播放背景音乐
+        this.soundChannel.stop();
+    };
     return BgContent;
 }(egret.DisplayObjectContainer));
-__reflect(BgContent.prototype, "BgContent", ["IDispose"]);
+__reflect(BgContent.prototype, "BgContent", ["IDispose", "ISound"]);

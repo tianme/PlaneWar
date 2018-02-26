@@ -1,7 +1,7 @@
 // 方向
 enum Direction{
-  up,
-  down,
-  left,
-  right
+  Up,
+  Down,
+  Left,
+  Right
 }

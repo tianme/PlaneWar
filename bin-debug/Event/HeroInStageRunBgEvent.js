@@ -8,6 +8,12 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
+/**
+ * Hero进入舞台事件
+ *
+ * @class HeroInStageRunBgEvent
+ * @extends {egret.Event}
+ */
 var HeroInStageRunBgEvent = (function (_super) {
     __extends(HeroInStageRunBgEvent, _super);
     function HeroInStageRunBgEvent(type, bubbles, cancelable) {

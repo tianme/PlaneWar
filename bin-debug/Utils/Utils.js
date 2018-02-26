@@ -17,6 +17,14 @@ var Utils = (function () {
     Utils.move = function (obj, stageInfo) {
         obj.move(stageInfo);
     };
+    // 停止声音
+    Utils.soundStop = function (obj) {
+        obj.stop();
+    };
+    // 开启声音
+    Utils.soundPlay = function (obj) {
+        obj.play();
+    };
     return Utils;
 }());
 __reflect(Utils.prototype, "Utils");

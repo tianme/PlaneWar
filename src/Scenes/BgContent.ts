@@ -1,11 +1,17 @@
-class BgContent extends egret.DisplayObjectContainer implements IDispose {
+class BgContent extends egret.DisplayObjectContainer
+  implements IDispose, ISound {
   private bgUp: egret.Bitmap;
   private bgDown: egret.Bitmap;
+  private bgSound: egret.Sound;
+  private soundChannel: egret.SoundChannel;
+  private channelPosition: number;
   constructor() {
     super();
     this.bgUp = new egret.Bitmap();
     this.bgDown = new egret.Bitmap();
+    this.channelPosition = 0;
     const texture = Utils.createBitmapByName('background');
+    this.bgSound = RES.getRes('bgsound');
     this.bgUp.texture = texture;
     this.bgDown.texture = texture;
 
@@ -13,6 +19,7 @@ class BgContent extends egret.DisplayObjectContainer implements IDispose {
     this.addEventListener(egret.Event.REMOVED, this.dispose, this);
   }
   private onAddToStage() {
+
     const stageW = this.stage.stageWidth;
     const stageH = this.stage.stageHeight;
     this.bgUp.width = stageW;
@@ -25,6 +32,7 @@ class BgContent extends egret.DisplayObjectContainer implements IDispose {
     this.bgDown.y = 0;
     this.addChild(this.bgUp);
     this.addChild(this.bgDown);
+    this.play();
   }
   public runBg(): void {
     this.addEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
@@ -37,7 +45,27 @@ class BgContent extends egret.DisplayObjectContainer implements IDispose {
   }
   public dispose() {
     this.removeEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
-    this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+    this.removeEventListener(
+      egret.Event.ADDED_TO_STAGE,
+      this.onAddToStage,
+      this,
+    );
     this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+  }
+
+  public play() {
+    console.log(this.channelPosition);
+    this.soundChannel = this.bgSound.play(this.channelPosition, -1);
+ }
+  public stop() {
+    if (!this.soundChannel) {
+      return;
+    }
+    // 记录背景音乐播放的位置
+    this.channelPosition = this.soundChannel.position;
+    // 停止播放背景音乐
+    this.soundChannel.stop();
+
+
   }
 }
