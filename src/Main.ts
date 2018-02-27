@@ -28,15 +28,15 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 class Main extends egret.DisplayObjectContainer {
-  private hero :Hero;
+  private hero: Hero;
   private bgContent: BgContent;
+  private autoOpenFireTimer: egret.Timer;
   public constructor() {
     super();
+    this.autoOpenFireTimer = new egret.Timer(500, 0);
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-
   }
   private onAddToStage(event: egret.Event) {
-
     egret.lifecycle.addLifecycleListener(context => {
       // custom lifecycle plugin
 
@@ -48,7 +48,6 @@ class Main extends egret.DisplayObjectContainer {
     egret.lifecycle.onPause = () => {
       egret.ticker.pause();
       Utils.soundStop(this.bgContent);
-
     };
 
     egret.lifecycle.onResume = () => {
@@ -97,20 +96,35 @@ class Main extends egret.DisplayObjectContainer {
 
     const hero: PlaneBase = this.hero;
 
-    this.addEventListener(HeroInStageRunBgEvent.HeroInStageRunBgEvent,(event: egret.Event) => {
+    this.addEventListener(
+      HeroInStageRunBgEvent.HeroInStageRunBgEvent,
+      (event: egret.Event) => {
         event.stopImmediatePropagation();
         bgContent.runBg();
         // 删除监听事件
-        this.removeEventListener(HeroInStageRunBgEvent.HeroInStageRunBgEvent, ()=>{},this);
-
-    }, this);
-    this.addEventListener(HeroInStageAnimationEndEvent.heroInStageAnimationEnd,(event: egret.Event) => {
+        this.removeEventListener(
+          HeroInStageRunBgEvent.HeroInStageRunBgEvent,
+          () => {},
+          this,
+        );
+      },
+      this,
+    );
+    this.addEventListener(
+      HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
+      (event: egret.Event) => {
         event.stopImmediatePropagation();
         this.touchEnabled = true;
-
+        this.autoOpenFire();
         // 删除监听事件
-        this.removeEventListener(HeroInStageAnimationEndEvent.heroInStageAnimationEnd, ()=>{},this);
-    },this);
+        this.removeEventListener(
+          HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
+          () => {},
+          this,
+        );
+      },
+      this,
+    );
 
     this.addChild(hero);
     this.addEventListener(
@@ -142,28 +156,27 @@ class Main extends egret.DisplayObjectContainer {
       },
       this,
     );
-
   }
   private touchMove(event: egret.TouchEvent) {
     const stageInfo: IStageInfo = {
-        stageW: this.stage.stageWidth,
-        stageH: this.stage.stageHeight,
-        stageX: event.stageX,
-        stageY: event.stageY,
-      };
+      stageW: this.stage.stageWidth,
+      stageH: this.stage.stageHeight,
+      stageX: event.stageX,
+      stageY: event.stageY,
+    };
 
-      Utils.move(this.hero, stageInfo);
+    Utils.move(this.hero, stageInfo);
   }
   /**
    * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
    * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
    */
-//   private createBitmapByName(name: string) {
-//     let result = new egret.Bitmap();
-//     let texture: egret.Texture = RES.getRes(name);
-//     result.texture = texture;
-//     return result;
-//   }
+  //   private createBitmapByName(name: string) {
+  //     let result = new egret.Bitmap();
+  //     let texture: egret.Texture = RES.getRes(name);
+  //     result.texture = texture;
+  //     return result;
+  //   }
 
   /**
    * 描述文件加载成功，开始播放动画
@@ -193,5 +206,30 @@ class Main extends egret.DisplayObjectContainer {
     };
 
     change();
+  }
+  /**
+   * hero自动开火
+   *
+   * @private
+   * @memberof Main
+   */
+  private autoOpenFire() {
+
+    this.autoOpenFireTimer.addEventListener(
+      egret.TimerEvent.TIMER,
+      this.autoAddBullet,
+      this,
+    );
+    this.autoOpenFireTimer.start();
+  }
+  /**
+   * hero自动添加子弹
+   *
+   * @private
+   * @memberof Main
+   */
+  private autoAddBullet () {
+    const bullet = new HoreBullet();
+    this.hero.emitBullet(bullet);
   }
 }

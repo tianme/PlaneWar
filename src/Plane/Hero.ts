@@ -39,6 +39,8 @@ class Hero extends PlaneBase implements IDispose {
     this.hero = new egret.Bitmap();
     this.hero.texture = this.textureList[0];
     this.timer = new egret.Timer(300, 0);
+    this.width = this.hero.width;
+    this.height = this.hero.height;
   }
   /**
    * 飞机的初始位置
@@ -47,9 +49,9 @@ class Hero extends PlaneBase implements IDispose {
     // 初始化飞机的位置
     const stageW = this.stage.stageWidth;
     const stageH = this.stage.stageHeight;
-    const x = stageW / 2 - this.hero.width / 2;
-    this.hero.x = x;
-    this.hero.y = stageH + this.hero.width;
+    const x = stageW / 2 - this.width / 2;
+    this.x = x;
+    this.y = stageH + this.width;
   }
   /**
    * 发送子弹
@@ -57,7 +59,21 @@ class Hero extends PlaneBase implements IDispose {
    * @param {BulletBase} bullet
    * @memberof Hero
    */
-  public emitBullet(bullet: BulletBase): void {}
+  public emitBullet(bullet: BulletBase): void {
+    bullet.x = this.x + this.width / 2 - bullet.width / 2;
+
+    egret.log(this.height / 2 - bullet.width / 2);
+
+    bullet.y = this.y + this.height / 2 - bullet.height / 2;
+    this.parent.addChild(bullet);
+    const horeBullet: ISound = bullet as HoreBullet;
+    horeBullet.play();
+    this.addEventListener(
+      egret.Event.ENTER_FRAME,
+      this.bulleMove.bind(this, bullet),
+      this,
+    );
+  }
 
   /**
    * 记录飞机与当前点击位置的距离
@@ -66,8 +82,8 @@ class Hero extends PlaneBase implements IDispose {
    * @memberof Hero
    */
   public setDistance(stageInfo: IStageInfo): void {
-    this.distance.stageX = stageInfo.stageX - this.hero.x;
-    this.distance.stageY = stageInfo.stageY - this.hero.y;
+    this.distance.stageX = stageInfo.stageX - this.x;
+    this.distance.stageY = stageInfo.stageY - this.y;
   }
 
   /**
@@ -79,14 +95,14 @@ class Hero extends PlaneBase implements IDispose {
    */
   private admissionAnimation(event: egret.TouchEvent): void {
     const stageH = this.stage.stageHeight;
-    const y = 0.7 * stageH - this.hero.height / 2;
+    const y = 0.7 * stageH - this.height / 2;
     const heroInStageAnimationEnd = new HeroInStageAnimationEndEvent(
       HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
     );
     const heroInStageRunBgEvent = new HeroInStageRunBgEvent(
       HeroInStageRunBgEvent.HeroInStageRunBgEvent,
     );
-    egret.Tween.get(this.hero)
+    egret.Tween.get(this)
       .to({y}, 1000, egret.Ease.sineInOut)
       .call(() => {
         console.log('hero背景执行');
@@ -108,7 +124,7 @@ class Hero extends PlaneBase implements IDispose {
    */
   public move(stageInfo: IStageInfo): void {
     console.log('move');
-    const hero = this.hero;
+    const hero = this;
     const distance = this.distance;
     let x = stageInfo.stageX - distance.stageX;
     const xMax = stageInfo.stageW - hero.width + hero.width / 2;
@@ -151,5 +167,8 @@ class Hero extends PlaneBase implements IDispose {
       this,
     );
     this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+  }
+  private bulleMove(bullet: BulletBase) {
+    bullet.y -= bullet.speed;
   }
 }

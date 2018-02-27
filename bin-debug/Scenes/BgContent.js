@@ -16,7 +16,7 @@ var BgContent = (function (_super) {
         _this.bgDown = new egret.Bitmap();
         _this.channelPosition = 0;
         var texture = Utils.createBitmapByName('background');
-        _this.bgSound = RES.getRes('bgsound');
+        _this.bgSound = Utils.createSoundByName('bgsound');
         _this.bgUp.texture = texture;
         _this.bgDown.texture = texture;
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
@@ -53,7 +53,6 @@ var BgContent = (function (_super) {
         this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
     };
     BgContent.prototype.play = function () {
-        console.log(this.channelPosition);
         this.soundChannel = this.bgSound.play(this.channelPosition, -1);
     };
     BgContent.prototype.stop = function () {

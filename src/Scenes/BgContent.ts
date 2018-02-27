@@ -11,7 +11,7 @@ class BgContent extends egret.DisplayObjectContainer
     this.bgDown = new egret.Bitmap();
     this.channelPosition = 0;
     const texture = Utils.createBitmapByName('background');
-    this.bgSound = RES.getRes('bgsound');
+    this.bgSound = Utils.createSoundByName('bgsound');
     this.bgUp.texture = texture;
     this.bgDown.texture = texture;
 
@@ -54,7 +54,6 @@ class BgContent extends egret.DisplayObjectContainer
   }
 
   public play() {
-    console.log(this.channelPosition);
     this.soundChannel = this.bgSound.play(this.channelPosition, -1);
  }
   public stop() {

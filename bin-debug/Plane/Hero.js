@@ -47,6 +47,8 @@ var Hero = (function (_super) {
         this.hero = new egret.Bitmap();
         this.hero.texture = this.textureList[0];
         this.timer = new egret.Timer(300, 0);
+        this.width = this.hero.width;
+        this.height = this.hero.height;
     };
     /**
      * 飞机的初始位置
@@ -55,9 +57,9 @@ var Hero = (function (_super) {
         // 初始化飞机的位置
         var stageW = this.stage.stageWidth;
         var stageH = this.stage.stageHeight;
-        var x = stageW / 2 - this.hero.width / 2;
-        this.hero.x = x;
-        this.hero.y = stageH + this.hero.width;
+        var x = stageW / 2 - this.width / 2;
+        this.x = x;
+        this.y = stageH + this.width;
     };
     /**
      * 发送子弹
@@ -65,7 +67,15 @@ var Hero = (function (_super) {
      * @param {BulletBase} bullet
      * @memberof Hero
      */
-    Hero.prototype.emitBullet = function (bullet) { };
+    Hero.prototype.emitBullet = function (bullet) {
+        bullet.x = this.x + this.width / 2 - bullet.width / 2;
+        egret.log(this.height / 2 - bullet.width / 2);
+        bullet.y = this.y + this.height / 2 - bullet.height / 2;
+        this.parent.addChild(bullet);
+        var horeBullet = bullet;
+        horeBullet.play();
+        this.addEventListener(egret.Event.ENTER_FRAME, this.bulleMove.bind(this, bullet), this);
+    };
     /**
      * 记录飞机与当前点击位置的距离
      *
@@ -73,8 +83,8 @@ var Hero = (function (_super) {
      * @memberof Hero
      */
     Hero.prototype.setDistance = function (stageInfo) {
-        this.distance.stageX = stageInfo.stageX - this.hero.x;
-        this.distance.stageY = stageInfo.stageY - this.hero.y;
+        this.distance.stageX = stageInfo.stageX - this.x;
+        this.distance.stageY = stageInfo.stageY - this.y;
     };
     /**
      * 入场动画
@@ -86,10 +96,10 @@ var Hero = (function (_super) {
     Hero.prototype.admissionAnimation = function (event) {
         var _this = this;
         var stageH = this.stage.stageHeight;
-        var y = 0.7 * stageH - this.hero.height / 2;
+        var y = 0.7 * stageH - this.height / 2;
         var heroInStageAnimationEnd = new HeroInStageAnimationEndEvent(HeroInStageAnimationEndEvent.heroInStageAnimationEnd);
         var heroInStageRunBgEvent = new HeroInStageRunBgEvent(HeroInStageRunBgEvent.HeroInStageRunBgEvent);
-        egret.Tween.get(this.hero)
+        egret.Tween.get(this)
             .to({ y: y }, 1000, egret.Ease.sineInOut)
             .call(function () {
             console.log('hero背景执行');
@@ -110,7 +120,7 @@ var Hero = (function (_super) {
      */
     Hero.prototype.move = function (stageInfo) {
         console.log('move');
-        var hero = this.hero;
+        var hero = this;
         var distance = this.distance;
         var x = stageInfo.stageX - distance.stageX;
         var xMax = stageInfo.stageW - hero.width + hero.width / 2;
@@ -141,6 +151,9 @@ var Hero = (function (_super) {
         this.removeEventListener(egret.TimerEvent.TIMER, this.toggleHeroBitMap, this);
         this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
         this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+    };
+    Hero.prototype.bulleMove = function (bullet) {
+        bullet.y -= bullet.speed;
     };
     return Hero;
 }(PlaneBase));

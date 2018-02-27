@@ -1,5 +1,5 @@
 class Utils {
-  // 获取资源文件
+  // 获取图片资源文件
   public static createBitmapByName(name: string): egret.Texture {
     const texture: egret.Texture = RES.getRes(name);
 
@@ -14,11 +14,14 @@ class Utils {
     obj.move(stageInfo);
   }
   // 停止声音
-  public static soundStop(obj: ISound){
+  public static soundStop(obj: ISound) {
     obj.stop();
   }
   // 开启声音
-  public static soundPlay(obj: ISound){
+  public static soundPlay(obj: ISound) {
     obj.play();
+  }
+  public static createSoundByName(name:string):egret.Sound {
+    return RES.getRes(name) as egret.Sound;
   }
 }

@@ -1,11 +1,11 @@
 {
   "groups": [
     {
-      "keys": "background,hero1,hero2",
+      "keys": "background,hero1,hero2,bullet1",
       "name": "images"
     },
     {
-      "keys": "bgsound",
+      "keys": "bgsound,bullet",
       "name": "sounds"
     }
   ],
@@ -29,6 +29,16 @@
       "name": "bgsound",
       "type": "sound",
       "url": "sound/game_music.mp3"
+    },
+    {
+      "name": "bullet1",
+      "type": "image",
+      "url": "assets/bullet1.png"
+    },
+    {
+      "name": "bullet",
+      "type": "sound",
+      "url": "sound/bullet.mp3"
     }
   ]
 }

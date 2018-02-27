@@ -75,6 +75,7 @@ var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
         var _this = _super.call(this) || this;
+        _this.autoOpenFireTimer = new egret.Timer(500, 0);
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
         return _this;
     }
@@ -172,6 +173,7 @@ var Main = (function (_super) {
         this.addEventListener(HeroInStageAnimationEndEvent.heroInStageAnimationEnd, function (event) {
             event.stopImmediatePropagation();
             _this.touchEnabled = true;
+            _this.autoOpenFire();
             // 删除监听事件
             _this.removeEventListener(HeroInStageAnimationEndEvent.heroInStageAnimationEnd, function () { }, _this);
         }, this);
@@ -235,6 +237,26 @@ var Main = (function (_super) {
             tw.call(change, _this);
         };
         change();
+    };
+    /**
+     * hero自动开火
+     *
+     * @private
+     * @memberof Main
+     */
+    Main.prototype.autoOpenFire = function () {
+        this.autoOpenFireTimer.addEventListener(egret.TimerEvent.TIMER, this.autoAddBullet, this);
+        this.autoOpenFireTimer.start();
+    };
+    /**
+     * hero自动添加子弹
+     *
+     * @private
+     * @memberof Main
+     */
+    Main.prototype.autoAddBullet = function () {
+        var bullet = new HoreBullet();
+        this.hero.emitBullet(bullet);
     };
     return Main;
 }(egret.DisplayObjectContainer));

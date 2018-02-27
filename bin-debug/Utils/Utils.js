@@ -4,7 +4,7 @@ var __reflect = (this && this.__reflect) || function (p, c, t) {
 var Utils = (function () {
     function Utils() {
     }
-    // 获取资源文件
+    // 获取图片资源文件
     Utils.createBitmapByName = function (name) {
         var texture = RES.getRes(name);
         return texture;
@@ -24,6 +24,9 @@ var Utils = (function () {
     // 开启声音
     Utils.soundPlay = function (obj) {
         obj.play();
+    };
+    Utils.createSoundByName = function (name) {
+        return RES.getRes(name);
     };
     return Utils;
 }());
