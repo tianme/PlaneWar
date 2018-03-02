@@ -8,11 +8,11 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
-var HoreBullet = (function (_super) {
-    __extends(HoreBullet, _super);
-    function HoreBullet() {
+var HeroBullet = (function (_super) {
+    __extends(HeroBullet, _super);
+    function HeroBullet() {
         var _this = _super.call(this) || this;
-        _this.speed = 5;
+        _this.speed = 12;
         _this.power = 1;
         _this.channelPosition = 0;
         _this.bullet = new egret.Bitmap();
@@ -23,10 +23,10 @@ var HoreBullet = (function (_super) {
         _this.addChild(_this.bullet);
         return _this;
     }
-    HoreBullet.prototype.play = function () {
+    HeroBullet.prototype.play = function () {
         this.bulletSound.play(this.channelPosition, 1);
     };
-    HoreBullet.prototype.stop = function () {
+    HeroBullet.prototype.stop = function () {
         if (!this.soundChannel) {
             return;
         }
@@ -35,6 +35,6 @@ var HoreBullet = (function (_super) {
         // 停止播放背景音乐
         this.soundChannel.stop();
     };
-    return HoreBullet;
+    return HeroBullet;
 }(BulletBase));
-__reflect(HoreBullet.prototype, "HoreBullet", ["ISound"]);
+__reflect(HeroBullet.prototype, "HeroBullet", ["ISound"]);

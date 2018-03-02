@@ -31,9 +31,11 @@ class Main extends egret.DisplayObjectContainer {
   private hero: Hero;
   private bgContent: BgContent;
   private autoOpenFireTimer: egret.Timer;
+  private bulletPool: Array<BulletBase>;
   public constructor() {
     super();
-    this.autoOpenFireTimer = new egret.Timer(500, 0);
+    this.bulletPool = new Array<BulletBase>();
+    this.autoOpenFireTimer = new egret.Timer(300, 0);
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
   }
   private onAddToStage(event: egret.Event) {
@@ -101,6 +103,7 @@ class Main extends egret.DisplayObjectContainer {
       (event: egret.Event) => {
         event.stopImmediatePropagation();
         bgContent.runBg();
+
         // 删除监听事件
         this.removeEventListener(
           HeroInStageRunBgEvent.HeroInStageRunBgEvent,
@@ -116,6 +119,8 @@ class Main extends egret.DisplayObjectContainer {
         event.stopImmediatePropagation();
         this.touchEnabled = true;
         this.autoOpenFire();
+        // 开始检测
+        this.detect();
         // 删除监听事件
         this.removeEventListener(
           HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
@@ -214,7 +219,6 @@ class Main extends egret.DisplayObjectContainer {
    * @memberof Main
    */
   private autoOpenFire() {
-
     this.autoOpenFireTimer.addEventListener(
       egret.TimerEvent.TIMER,
       this.autoAddBullet,
@@ -228,8 +232,34 @@ class Main extends egret.DisplayObjectContainer {
    * @private
    * @memberof Main
    */
-  private autoAddBullet () {
-    const bullet = new HoreBullet();
+  private autoAddBullet() {
+    const bullet = new HeroBullet();
     this.hero.emitBullet(bullet);
+    // this.bulletPool.push(bullet);
+  }
+  /**
+   * 碰撞检测、子弹越界检测、敌机越界检测
+   *
+   * @private
+   * @memberof Main
+   */
+  private detect() {
+
+    this.addEventListener(
+      egret.Event.ENTER_FRAME,
+      () => {
+        BulletPool.heroBulletPool.forEach((item,index) => {
+          // 判断当前子弹是否有父元素，如果没有，当前元素还没有被添加到舞台上，先不做处理。
+          if(!item.parent){
+            return;
+          }
+          if(item.y< -item.height){
+            BulletPool.heroBulletPool.splice(index,1);
+            this.removeChild(item);
+          }
+        });
+      },
+      this,
+    );
   }
 }

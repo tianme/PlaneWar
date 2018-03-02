@@ -1,12 +1,15 @@
+
+
 class Hero extends PlaneBase implements IDispose {
-  public armor: number;
+  public life: number;
   private textureList: Array<egret.Texture>;
   public hero: egret.Bitmap;
   private timer: egret.Timer;
   public distance: IStageInfo;
   constructor(armor: number) {
     super();
-    this.armor = armor;
+    this.life = GameConfig.hero.life;
+    // console.log(gameConfig);
     this.init();
     this.addChild(this.hero);
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
@@ -38,7 +41,7 @@ class Hero extends PlaneBase implements IDispose {
     });
     this.hero = new egret.Bitmap();
     this.hero.texture = this.textureList[0];
-    this.timer = new egret.Timer(300, 0);
+    this.timer = new egret.Timer(GameConfig.hero.planeToggleTimeSpan, GameConfig.hero.planeToggleCount);
     this.width = this.hero.width;
     this.height = this.hero.height;
   }
@@ -61,12 +64,10 @@ class Hero extends PlaneBase implements IDispose {
    */
   public emitBullet(bullet: BulletBase): void {
     bullet.x = this.x + this.width / 2 - bullet.width / 2;
-
-    egret.log(this.height / 2 - bullet.width / 2);
-
     bullet.y = this.y + this.height / 2 - bullet.height / 2;
     this.parent.addChild(bullet);
-    const horeBullet: ISound = bullet as HoreBullet;
+    BulletPool.heroBulletPool.push(bullet);
+    const horeBullet: ISound = bullet as HeroBullet;
     horeBullet.play();
     this.addEventListener(
       egret.Event.ENTER_FRAME,
@@ -103,13 +104,13 @@ class Hero extends PlaneBase implements IDispose {
       HeroInStageRunBgEvent.HeroInStageRunBgEvent,
     );
     egret.Tween.get(this)
-      .to({y}, 1000, egret.Ease.sineInOut)
+      .to({y}, GameConfig.hero.inStageAnimationTime, egret.Ease.sineInOut)
       .call(() => {
         console.log('hero背景执行');
         // 动画结束发送事件
         this.dispatchEvent(heroInStageRunBgEvent);
       })
-      .to({y: stageH - 200}, 3000, egret.Ease.sineInOut)
+      .to({y: stageH - 200}, GameConfig.hero.inStageAnimationTimeEnd, egret.Ease.sineInOut)
       .call(() => {
         console.log('hero动画全部结束');
         this.dispatchEvent(heroInStageAnimationEnd);

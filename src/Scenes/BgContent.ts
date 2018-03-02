@@ -64,7 +64,5 @@ class BgContent extends egret.DisplayObjectContainer
     this.channelPosition = this.soundChannel.position;
     // 停止播放背景音乐
     this.soundChannel.stop();
-
-
   }
 }
