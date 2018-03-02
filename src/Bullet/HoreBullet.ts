@@ -1,4 +1,4 @@
-class HoreBullet extends BulletBase implements ISound {
+class HeroBullet extends BulletBase implements ISound {
   public speed: number;
   public power: number;
   private bulletSound: egret.Sound;
@@ -7,7 +7,7 @@ class HoreBullet extends BulletBase implements ISound {
   private soundChannel :egret.SoundChannel;
   constructor() {
     super();
-    this.speed = 5;
+    this.speed = 12;
     this.power = 1;
     this.channelPosition = 0;
     this.bullet = new egret.Bitmap();

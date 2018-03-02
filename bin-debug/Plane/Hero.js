@@ -12,7 +12,8 @@ var Hero = (function (_super) {
     __extends(Hero, _super);
     function Hero(armor) {
         var _this = _super.call(this) || this;
-        _this.armor = armor;
+        _this.life = GameConfig.hero.life;
+        // console.log(gameConfig);
         _this.init();
         _this.addChild(_this.hero);
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
@@ -46,7 +47,7 @@ var Hero = (function (_super) {
         });
         this.hero = new egret.Bitmap();
         this.hero.texture = this.textureList[0];
-        this.timer = new egret.Timer(300, 0);
+        this.timer = new egret.Timer(GameConfig.hero.planeToggleTimeSpan, GameConfig.hero.planeToggleCount);
         this.width = this.hero.width;
         this.height = this.hero.height;
     };
@@ -69,9 +70,9 @@ var Hero = (function (_super) {
      */
     Hero.prototype.emitBullet = function (bullet) {
         bullet.x = this.x + this.width / 2 - bullet.width / 2;
-        egret.log(this.height / 2 - bullet.width / 2);
         bullet.y = this.y + this.height / 2 - bullet.height / 2;
         this.parent.addChild(bullet);
+        BulletPool.heroBulletPool.push(bullet);
         var horeBullet = bullet;
         horeBullet.play();
         this.addEventListener(egret.Event.ENTER_FRAME, this.bulleMove.bind(this, bullet), this);
@@ -100,13 +101,13 @@ var Hero = (function (_super) {
         var heroInStageAnimationEnd = new HeroInStageAnimationEndEvent(HeroInStageAnimationEndEvent.heroInStageAnimationEnd);
         var heroInStageRunBgEvent = new HeroInStageRunBgEvent(HeroInStageRunBgEvent.HeroInStageRunBgEvent);
         egret.Tween.get(this)
-            .to({ y: y }, 1000, egret.Ease.sineInOut)
+            .to({ y: y }, GameConfig.hero.inStageAnimationTime, egret.Ease.sineInOut)
             .call(function () {
             console.log('hero背景执行');
             // 动画结束发送事件
             _this.dispatchEvent(heroInStageRunBgEvent);
         })
-            .to({ y: stageH - 200 }, 3000, egret.Ease.sineInOut)
+            .to({ y: stageH - 200 }, GameConfig.hero.inStageAnimationTimeEnd, egret.Ease.sineInOut)
             .call(function () {
             console.log('hero动画全部结束');
             _this.dispatchEvent(heroInStageAnimationEnd);

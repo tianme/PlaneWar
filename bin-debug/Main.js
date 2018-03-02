@@ -75,7 +75,8 @@ var Main = (function (_super) {
     __extends(Main, _super);
     function Main() {
         var _this = _super.call(this) || this;
-        _this.autoOpenFireTimer = new egret.Timer(500, 0);
+        _this.bulletPool = new Array();
+        _this.autoOpenFireTimer = new egret.Timer(300, 0);
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
         return _this;
     }
@@ -174,6 +175,8 @@ var Main = (function (_super) {
             event.stopImmediatePropagation();
             _this.touchEnabled = true;
             _this.autoOpenFire();
+            // 开始检测
+            _this.detect();
             // 删除监听事件
             _this.removeEventListener(HeroInStageAnimationEndEvent.heroInStageAnimationEnd, function () { }, _this);
         }, this);
@@ -255,8 +258,30 @@ var Main = (function (_super) {
      * @memberof Main
      */
     Main.prototype.autoAddBullet = function () {
-        var bullet = new HoreBullet();
+        var bullet = new HeroBullet();
         this.hero.emitBullet(bullet);
+        // this.bulletPool.push(bullet);
+    };
+    /**
+     * 碰撞检测、子弹越界检测、敌机越界检测
+     *
+     * @private
+     * @memberof Main
+     */
+    Main.prototype.detect = function () {
+        var _this = this;
+        this.addEventListener(egret.Event.ENTER_FRAME, function () {
+            BulletPool.heroBulletPool.forEach(function (item, index) {
+                // 判断当前子弹是否有父元素，如果没有，当前元素还没有被添加到舞台上，先不做处理。
+                if (!item.parent) {
+                    return;
+                }
+                if (item.y < -item.height) {
+                    BulletPool.heroBulletPool.splice(index, 1);
+                    _this.removeChild(item);
+                }
+            });
+        }, this);
     };
     return Main;
 }(egret.DisplayObjectContainer));

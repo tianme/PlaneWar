@@ -2,7 +2,7 @@
 
 abstract class PlaneBase extends egret.DisplayObjectContainer{
   // 飞机护甲
-  public abstract armor: number;
+  public abstract life: number;
 
   // 发射子弹方法
   public abstract emitBullet(bullet: BulletBase): void;
