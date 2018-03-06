@@ -66,14 +66,10 @@ class Hero extends PlaneBase implements IDispose {
     bullet.x = this.x + this.width / 2 - bullet.width / 2;
     bullet.y = this.y + this.height / 2 - bullet.height / 2;
     this.parent.addChild(bullet);
-    BulletPool.heroBulletPool.push(bullet);
-    const horeBullet: ISound = bullet as HeroBullet;
-    horeBullet.play();
-    this.addEventListener(
-      egret.Event.ENTER_FRAME,
-      this.bulleMove.bind(this, bullet),
-      this,
-    );
+    stageObjectCache.HeroBulletCache.push(bullet);
+    const heroBullet: ISound = bullet as HeroBullet;
+    heroBullet.play();
+    bullet.move(Direction.Up);
   }
 
   /**
@@ -168,8 +164,5 @@ class Hero extends PlaneBase implements IDispose {
       this,
     );
     this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
-  }
-  private bulleMove(bullet: BulletBase) {
-    bullet.y -= bullet.speed;
   }
 }

@@ -5,4 +5,6 @@ abstract class BulletBase extends egret.DisplayObjectContainer {
   public abstract speed: number;
   // 子弹的威力
   public abstract power: number;
+  // 子弹移动
+  public abstract move(direction: Direction):void;
 }

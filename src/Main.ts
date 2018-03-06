@@ -28,13 +28,13 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 class Main extends egret.DisplayObjectContainer {
-  private hero: Hero;
+  private hero: PlaneBase;
   private bgContent: BgContent;
   private autoOpenFireTimer: egret.Timer;
-  private bulletPool: Array<BulletBase>;
+  private HeroFactory: AbstractFactory;
   public constructor() {
     super();
-    this.bulletPool = new Array<BulletBase>();
+    this.HeroFactory = HeroFactory.getInstance();
     this.autoOpenFireTimer = new egret.Timer(300, 0);
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
   }
@@ -64,7 +64,7 @@ class Main extends egret.DisplayObjectContainer {
 
   private async runGame() {
     await this.loadResource();
-    this.hero = new Hero(1);
+    this.hero = this.HeroFactory.createPlane();
     this.bgContent = new BgContent();
     this.createGameScene();
     // const result = await RES.getResAsync("description_json")
@@ -100,34 +100,12 @@ class Main extends egret.DisplayObjectContainer {
 
     this.addEventListener(
       HeroInStageRunBgEvent.HeroInStageRunBgEvent,
-      (event: egret.Event) => {
-        event.stopImmediatePropagation();
-        bgContent.runBg();
-
-        // 删除监听事件
-        this.removeEventListener(
-          HeroInStageRunBgEvent.HeroInStageRunBgEvent,
-          () => {},
-          this,
-        );
-      },
+      this.HeroInStageRunBgEventHandle,
       this,
     );
     this.addEventListener(
       HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
-      (event: egret.Event) => {
-        event.stopImmediatePropagation();
-        this.touchEnabled = true;
-        this.autoOpenFire();
-        // 开始检测
-        this.detect();
-        // 删除监听事件
-        this.removeEventListener(
-          HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
-          () => {},
-          this,
-        );
-      },
+      this.heroInStageAnimationEndHandle,
       this,
     );
 
@@ -152,13 +130,7 @@ class Main extends egret.DisplayObjectContainer {
     );
     this.addEventListener(
       egret.TouchEvent.TOUCH_END,
-      () => {
-        this.stage.removeEventListener(
-          egret.TouchEvent.TOUCH_MOVE,
-          this.touchMove,
-          this,
-        );
-      },
+      this.touchEndHandle,
       this,
     );
   }
@@ -233,9 +205,8 @@ class Main extends egret.DisplayObjectContainer {
    * @memberof Main
    */
   private autoAddBullet() {
-    const bullet = new HeroBullet();
+    const bullet = this.HeroFactory.createBullet();
     this.hero.emitBullet(bullet);
-    // this.bulletPool.push(bullet);
   }
   /**
    * 碰撞检测、子弹越界检测、敌机越界检测
@@ -247,19 +218,69 @@ class Main extends egret.DisplayObjectContainer {
 
     this.addEventListener(
       egret.Event.ENTER_FRAME,
-      () => {
-        BulletPool.heroBulletPool.forEach((item,index) => {
-          // 判断当前子弹是否有父元素，如果没有，当前元素还没有被添加到舞台上，先不做处理。
-          if(!item.parent){
-            return;
-          }
-          if(item.y< -item.height){
-            BulletPool.heroBulletPool.splice(index,1);
-            this.removeChild(item);
-          }
-        });
-      },
+      this.heroBulletDetecHandle,
       this,
     );
+  }
+  /**
+   * hero进入场景的处理事件
+   * @param event egret.Event
+   */
+  private HeroInStageRunBgEventHandle(event: egret.Event) {
+    event.stopImmediatePropagation();
+    this.bgContent.runBg();
+    this.removeEventListener(
+      HeroInStageRunBgEvent.HeroInStageRunBgEvent,
+      this.HeroInStageRunBgEventHandle,
+      this
+    );
+  }
+  private heroInStageAnimationEndHandle(event: egret.Event) {
+    event.stopImmediatePropagation();
+    this.touchEnabled = true;
+    this.autoOpenFire();
+    // 开始检测
+    this.detect();
+    // 删除监听事件
+    this.removeEventListener(
+      HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
+      this.heroInStageAnimationEndHandle,
+      this,
+    );
+  }
+  /**
+   *
+   *
+   * @private
+   * @memberof Main
+   */
+  private touchEndHandle() {
+    this.stage.removeEventListener(
+      egret.TouchEvent.TOUCH_MOVE,
+      this.touchMove,
+      this,
+    );
+  }
+  /**
+   * hero子弹碰撞检测事件的处理方法
+   *
+   * @private
+   * @memberof Main
+   */
+  private heroBulletDetecHandle() {
+    stageObjectCache.HeroBulletCache.forEach((item,index) => {
+      // 判断当前子弹是否有父元素，如果没有，当前元素还没有被添加到舞台上，先不做处理。
+      if(!item.parent){
+        return;
+      }
+      if(item.y< -item.height){
+        stageObjectCache.HeroBulletCache.splice(index,1);
+
+        this.removeChild(item);
+        // 把item回收到heroBulletPool中
+        Pool.heroBulletPool.push(item);
+      }
+
+    });
   }
 }

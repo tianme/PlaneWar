@@ -12,6 +12,7 @@ var BgContent = (function (_super) {
     __extends(BgContent, _super);
     function BgContent() {
         var _this = _super.call(this) || this;
+        _this.config = GameConfig.bg;
         _this.bgUp = new egret.Bitmap();
         _this.bgDown = new egret.Bitmap();
         _this.channelPosition = 0;
@@ -37,12 +38,14 @@ var BgContent = (function (_super) {
         this.addChild(this.bgUp);
         this.addChild(this.bgDown);
         this.play();
+        this.touchEnabled = true;
+        this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.touchPlay, this);
     };
     BgContent.prototype.runBg = function () {
         this.addEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
     };
     BgContent.prototype.moveBg = function () {
-        this.y += 2;
+        this.y += this.config.speed;
         if (this.y >= this.stage.stageHeight) {
             this.y = 0;
         }
@@ -50,6 +53,7 @@ var BgContent = (function (_super) {
     BgContent.prototype.dispose = function () {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
         this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
+        this.removeEventListener(egret.Event.REMOVED, this.touchPlay, this);
         this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
     };
     BgContent.prototype.play = function () {
@@ -63,6 +67,10 @@ var BgContent = (function (_super) {
         this.channelPosition = this.soundChannel.position;
         // 停止播放背景音乐
         this.soundChannel.stop();
+    };
+    BgContent.prototype.touchPlay = function () {
+        this.play();
+        this.touchEnabled = false;
     };
     return BgContent;
 }(egret.DisplayObjectContainer));

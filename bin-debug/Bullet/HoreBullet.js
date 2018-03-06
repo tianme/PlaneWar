@@ -21,6 +21,7 @@ var HeroBullet = (function (_super) {
         _this.width = _this.bullet.width;
         _this.height = _this.bullet.height;
         _this.addChild(_this.bullet);
+        _this.addEventListener(egret.Event.REMOVED, _this.dispose, _this);
         return _this;
     }
     HeroBullet.prototype.play = function () {
@@ -35,6 +36,26 @@ var HeroBullet = (function (_super) {
         // 停止播放背景音乐
         this.soundChannel.stop();
     };
+    HeroBullet.prototype.move = function (direction) {
+        this.direction = direction;
+        this.addEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
+    };
+    HeroBullet.prototype.frameHandle = function () {
+        switch (this.direction) {
+            case Direction.Up:
+                this.y -= this.speed;
+                break;
+            case Direction.Down:
+                this.y += this.speed;
+                break;
+            default:
+                break;
+        }
+    };
+    HeroBullet.prototype.dispose = function () {
+        this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
+        this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+    };
     return HeroBullet;
 }(BulletBase));
-__reflect(HeroBullet.prototype, "HeroBullet", ["ISound"]);
+__reflect(HeroBullet.prototype, "HeroBullet", ["ISound", "IDispose"]);

@@ -72,10 +72,10 @@ var Hero = (function (_super) {
         bullet.x = this.x + this.width / 2 - bullet.width / 2;
         bullet.y = this.y + this.height / 2 - bullet.height / 2;
         this.parent.addChild(bullet);
-        BulletPool.heroBulletPool.push(bullet);
-        var horeBullet = bullet;
-        horeBullet.play();
-        this.addEventListener(egret.Event.ENTER_FRAME, this.bulleMove.bind(this, bullet), this);
+        stageObjectCache.HeroBulletCache.push(bullet);
+        var heroBullet = bullet;
+        heroBullet.play();
+        bullet.move(Direction.Up);
     };
     /**
      * 记录飞机与当前点击位置的距离
@@ -152,9 +152,6 @@ var Hero = (function (_super) {
         this.removeEventListener(egret.TimerEvent.TIMER, this.toggleHeroBitMap, this);
         this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
         this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
-    };
-    Hero.prototype.bulleMove = function (bullet) {
-        bullet.y -= bullet.speed;
     };
     return Hero;
 }(PlaneBase));
