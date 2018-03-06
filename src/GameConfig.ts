@@ -3,20 +3,18 @@ interface IHero {
   planeToggleTimeSpan: number; // 飞机切换图片的时间
   planeToggleCount: number; // 飞机切换的次数
   inStageAnimationTime: number; // 进场动画的时间
-  inStageAnimationTimeEnd: number;
+  inStageAnimationTimeEnd: number; // 进场动画结束
 }
-
-// interface IGameConfig {
-//   hero: IHero;
-// }
-// const gameConfig:IGameConfig = {
-//   hero:{
-//     armor: 1,
-//     planeToggleTimeSpan: 300,
-//     planeToggleCount: 0,
-//     inStageAnimationTime: 1000,
-//   }
-// }
+/**
+ * 背景
+ */
+interface IBG{
+  speed: number, // 背景滚动的速度
+}
+/**
+ * 配置信息
+ * @class GameConfig
+ */
 class GameConfig {
   public static hero: IHero = {
     life: 1,
@@ -25,4 +23,7 @@ class GameConfig {
     inStageAnimationTime: 1000,
     inStageAnimationTimeEnd: 3000,
   };
+  public static bg: IBG = {
+    speed: 2,
+  }
 }

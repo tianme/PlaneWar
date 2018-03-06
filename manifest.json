@@ -8,16 +8,18 @@
 		"libs/modules/promise/promise.js"
 	],
 	"game": [
+		"bin-debug/Factory/AbstractFactory.js",
 		"bin-debug/Bullet/BulletBase.js",
 		"bin-debug/Plane/PlaneBase.js",
-		"bin-debug/Factory/BulletFactory.js",
 		"bin-debug/Platform.js",
 		"bin-debug/GameConfig.js",
 		"bin-debug/Bullet/HoreBullet.js",
+		"bin-debug/Cache/stageObjectCache.js",
 		"bin-debug/Enum/Direction.js",
 		"bin-debug/Event/HeroInStageAnimationEndEvent.js",
 		"bin-debug/Event/HeroInStageRunBgEvent.js",
-		"bin-debug/Utils/Utils.js",
+		"bin-debug/LoadingUI.js",
+		"bin-debug/Factory/HeroFactory.js",
 		"bin-debug/Interface/IDispose.js",
 		"bin-debug/Interface/IFly.js",
 		"bin-debug/Interface/ISound.js",
@@ -26,6 +28,6 @@
 		"bin-debug/Main.js",
 		"bin-debug/Pool/BulletPool.js",
 		"bin-debug/Scenes/BgContent.js",
-		"bin-debug/LoadingUI.js"
+		"bin-debug/Utils/Utils.js"
 	]
 }

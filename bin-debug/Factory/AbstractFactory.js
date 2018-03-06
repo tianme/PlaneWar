@@ -8,11 +8,16 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
-var BulletFactory = (function (_super) {
-    __extends(BulletFactory, _super);
-    function BulletFactory() {
+/**
+ * 用于生产
+ *
+ * @class Factory
+ */
+var AbstractFactory = (function (_super) {
+    __extends(AbstractFactory, _super);
+    function AbstractFactory() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return BulletFactory;
+    return AbstractFactory;
 }(egret.DisplayObjectContainer));
-__reflect(BulletFactory.prototype, "BulletFactory");
+__reflect(AbstractFactory.prototype, "AbstractFactory");
