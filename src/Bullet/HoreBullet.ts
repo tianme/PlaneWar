@@ -18,7 +18,7 @@ class HeroBullet extends BulletBase implements ISound, IDispose {
     this.width = this.bullet.width;
     this.height = this.bullet.height;
     this.addChild(this.bullet);
-    this.addEventListener(egret.Event.REMOVED, this.dispose, this);
+    this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
   public play(): void {
     this.bulletSound.play(this.channelPosition, 1);
@@ -49,7 +49,8 @@ class HeroBullet extends BulletBase implements ISound, IDispose {
     }
   }
   public dispose() {
+    // console.log('bullet.ts dispose');
     this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
-    this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+    this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
 }

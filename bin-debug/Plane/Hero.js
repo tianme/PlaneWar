@@ -12,12 +12,15 @@ var Hero = (function (_super) {
     __extends(Hero, _super);
     function Hero(armor) {
         var _this = _super.call(this) || this;
+        var shp = new egret.Shape();
         _this.life = GameConfig.hero.life;
-        // console.log(gameConfig);
+        _this.state = PlaneState.existing;
+        _this.speed = 0;
+        _this.blowUpTextureList = new Array();
         _this.init();
         _this.addChild(_this.hero);
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
-        _this.addEventListener(egret.Event.REMOVED, _this.dispose, _this);
+        _this.addEventListener(egret.Event.REMOVED_FROM_STAGE, _this.dispose, _this);
         return _this;
     }
     Hero.prototype.onAddToStage = function (event) {
@@ -45,6 +48,10 @@ var Hero = (function (_super) {
         ['hero1', 'hero2'].forEach(function (item, index) {
             _this.textureList.push(Utils.createBitmapByName(item));
         });
+        ['hero_blowup_n1', 'hero_blowup_n2', 'hero_blowup_n3', 'hero_blowup_n4'].forEach(function (item, index) {
+            _this.blowUpTextureList.push(Utils.createBitmapByName(item));
+        });
+        this.explodeTimer = new egret.Timer(200, 4);
         this.hero = new egret.Bitmap();
         this.hero.texture = this.textureList[0];
         this.timer = new egret.Timer(GameConfig.hero.planeToggleTimeSpan, GameConfig.hero.planeToggleCount);
@@ -71,8 +78,10 @@ var Hero = (function (_super) {
     Hero.prototype.emitBullet = function (bullet) {
         bullet.x = this.x + this.width / 2 - bullet.width / 2;
         bullet.y = this.y + this.height / 2 - bullet.height / 2;
-        this.parent.addChild(bullet);
-        stageObjectCache.HeroBulletCache.push(bullet);
+        if (this.parent) {
+            this.parent.addChild(bullet);
+        }
+        StageObjectCache.heroBulletCache.push(bullet);
         var heroBullet = bullet;
         heroBullet.play();
         bullet.move(Direction.Up);
@@ -120,7 +129,6 @@ var Hero = (function (_super) {
      * @memberof Hero
      */
     Hero.prototype.move = function (stageInfo) {
-        console.log('move');
         var hero = this;
         var distance = this.distance;
         var x = stageInfo.stageX - distance.stageX;
@@ -149,9 +157,32 @@ var Hero = (function (_super) {
         this.hero.texture = this.textureList[index];
     };
     Hero.prototype.dispose = function () {
+        console.log('hero.ts dispose');
         this.removeEventListener(egret.TimerEvent.TIMER, this.toggleHeroBitMap, this);
         this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-        this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+        this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
+    };
+    Hero.prototype.explode = function () {
+        this.timer.stop();
+        this.explodeTimer.addEventListener(egret.TimerEvent.TIMER, this.explodeHandle, this);
+        this.explodeTimer.addEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
+        this.explodeTimer.start();
+    };
+    Hero.prototype.explodeHandle = function (event) {
+        var current = event.target.currentCount;
+        var index = current % 4;
+        this.hero.texture = this.blowUpTextureList[index];
+    };
+    Hero.prototype.timerCompleteHandle = function () {
+        this.state = PlaneState.nonexistent;
+        this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER, this.explodeHandle, this);
+        this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
+        this.dispose();
+        if (this.parent) {
+            this.parent.removeChild(this);
+        }
+    };
+    Hero.prototype.reset = function () {
     };
     return Hero;
 }(PlaneBase));

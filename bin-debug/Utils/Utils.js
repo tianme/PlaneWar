@@ -28,6 +28,24 @@ var Utils = (function () {
     Utils.createSoundByName = function (name) {
         return RES.getRes(name);
     };
+    /**
+     * 基于矩形的碰撞检测
+     *
+     * @static
+     * @param {egret.DisplayObject} obj1
+     * @param {egret.DisplayObject} obj2
+     * @returns {boolean}
+     * @memberof Utils
+     */
+    Utils.hitDetect = function (obj1, obj2) {
+        var rect1 = obj1.getBounds();
+        var rect2 = obj2.getBounds();
+        rect1.x = obj1.x;
+        rect1.y = obj1.y;
+        rect2.x = obj2.x;
+        rect2.y = obj2.y;
+        return rect1.intersects(rect2);
+    };
     return Utils;
 }());
 __reflect(Utils.prototype, "Utils");

@@ -18,7 +18,8 @@ class BgContent extends egret.DisplayObjectContainer
     this.bgDown.texture = texture;
 
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-    this.addEventListener(egret.Event.REMOVED, this.dispose, this);
+    this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
+
   }
   private onAddToStage() {
     const stageW = this.stage.stageWidth;
@@ -35,7 +36,7 @@ class BgContent extends egret.DisplayObjectContainer
     this.addChild(this.bgDown);
     this.play();
     this.touchEnabled = true;
-    this.addEventListener(egret.TouchEvent.TOUCH_TAP,this.touchPlay,this);
+    // this.addEventListener(egret.TouchEvent.TOUCH_TAP,this.touchPlay,this);
   }
   public runBg(): void {
     this.addEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
@@ -53,12 +54,13 @@ class BgContent extends egret.DisplayObjectContainer
       this.onAddToStage,
       this,
     );
-    this.removeEventListener(egret.Event.REMOVED,this.touchPlay,this);
-    this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+    // this.removeEventListener(egret.Event.REMOVED,this.touchPlay,this);
+    this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
 
   public play() {
     this.soundChannel = this.bgSound.play(this.channelPosition, -1);
+
   }
   public stop() {
     if (!this.soundChannel) {
@@ -67,10 +69,11 @@ class BgContent extends egret.DisplayObjectContainer
     // 记录背景音乐播放的位置
     this.channelPosition = this.soundChannel.position;
     // 停止播放背景音乐
+    console.log('stop');
     this.soundChannel.stop();
   }
-  private touchPlay() {
-    this.play();
-    this.touchEnabled = false;
-  }
+  // private touchPlay() {
+  //   this.play();
+  //   this.touchEnabled = false;
+  // }
 }

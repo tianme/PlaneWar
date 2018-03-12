@@ -1,10 +1,11 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
-var stageObjectCache = (function () {
-    function stageObjectCache() {
+var StageObjectCache = (function () {
+    function StageObjectCache() {
     }
-    stageObjectCache.HeroBulletCache = new Array();
-    return stageObjectCache;
+    StageObjectCache.heroBulletCache = new Array();
+    StageObjectCache.enemyCache = new Array();
+    return StageObjectCache;
 }());
-__reflect(stageObjectCache.prototype, "stageObjectCache");
+__reflect(StageObjectCache.prototype, "StageObjectCache");

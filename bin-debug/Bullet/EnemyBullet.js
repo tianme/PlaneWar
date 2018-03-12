@@ -1,4 +1,3 @@
-// 飞机抽象类
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
@@ -9,14 +8,13 @@ var __extends = this && this.__extends || function __extends(t, e) {
 for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
 r.prototype = e.prototype, t.prototype = new r();
 };
-var PlaneBase = (function (_super) {
-    __extends(PlaneBase, _super);
-    function PlaneBase() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        // 飞机状态
-        _this.state = PlaneState.existing;
-        return _this;
+var EnemyBullet = (function (_super) {
+    __extends(EnemyBullet, _super);
+    function EnemyBullet() {
+        return _super.call(this) || this;
     }
-    return PlaneBase;
-}(egret.DisplayObjectContainer));
-__reflect(PlaneBase.prototype, "PlaneBase");
+    EnemyBullet.prototype.move = function () {
+    };
+    return EnemyBullet;
+}(BulletBase));
+__reflect(EnemyBullet.prototype, "EnemyBullet");
