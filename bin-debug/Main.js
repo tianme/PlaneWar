@@ -73,10 +73,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var Main = (function (_super) {
     __extends(Main, _super);
+    // private enemySmall: PlaneBase;
     function Main() {
         var _this = _super.call(this) || this;
-        _this.HeroFactory = HeroFactory.getInstance();
-        _this.autoOpenFireTimer = new egret.Timer(300, 0);
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
         return _this;
     }
@@ -84,20 +83,21 @@ var Main = (function (_super) {
         var _this = this;
         egret.lifecycle.addLifecycleListener(function (context) {
             // custom lifecycle plugin
-            context.onUpdate = function () {
-                // console.log(111);
-            };
+            context.onUpdate = function () { };
         });
         egret.lifecycle.onPause = function () {
             egret.ticker.pause();
             Utils.soundStop(_this.bgContent);
+            console.log(StageObjectCache.heroBulletCache.length);
+            console.log(StageObjectCache.enemyCache.length);
+            console.log(Pool.enemySmallPool.length);
         };
         egret.lifecycle.onResume = function () {
             egret.ticker.resume();
             Utils.soundPlay(_this.bgContent);
         };
         this.runGame().catch(function (e) {
-            console.log(e);
+            // console.log(e);
         });
     };
     Main.prototype.runGame = function () {
@@ -108,20 +108,21 @@ var Main = (function (_super) {
                     case 0: return [4 /*yield*/, this.loadResource()];
                     case 1:
                         _a.sent();
-                        this.hero = this.HeroFactory.createPlane();
                         this.bgContent = new BgContent();
+                        this.gameScene = new GameScene();
                         this.createGameScene();
+                        // Pool.enemySmallPool = Utils.test();
                         // const result = await RES.getResAsync("description_json")
                         // this.startAnimation(result);
                         return [4 /*yield*/, platform.login()];
                     case 2:
+                        // Pool.enemySmallPool = Utils.test();
                         // const result = await RES.getResAsync("description_json")
                         // this.startAnimation(result);
                         _a.sent();
                         return [4 /*yield*/, platform.getUserInfo()];
                     case 3:
                         userInfo = _a.sent();
-                        console.log(userInfo);
                         return [2 /*return*/];
                 }
             });
@@ -161,33 +162,22 @@ var Main = (function (_super) {
      * Create a game scene
      */
     Main.prototype.createGameScene = function () {
-        var _this = this;
-        var bgContent = this.bgContent;
-        this.addChild(bgContent);
-        var hero = this.hero;
+        this.addChild(this.bgContent);
+        this.addChild(this.gameScene);
         this.addEventListener(HeroInStageRunBgEvent.HeroInStageRunBgEvent, this.HeroInStageRunBgEventHandle, this);
-        this.addEventListener(HeroInStageAnimationEndEvent.heroInStageAnimationEnd, this.heroInStageAnimationEndHandle, this);
-        this.addChild(hero);
-        this.addEventListener(egret.TouchEvent.TOUCH_BEGIN, function (event) {
-            var stageInfo = {
-                stageW: _this.stage.stageWidth,
-                stageH: _this.stage.stageHeight,
-                stageX: event.stageX,
-                stageY: event.stageY,
-            };
-            hero.setDistance(stageInfo);
-            _this.stage.addEventListener(egret.TouchEvent.TOUCH_MOVE, _this.touchMove, _this);
-        }, this);
-        this.addEventListener(egret.TouchEvent.TOUCH_END, this.touchEndHandle, this);
+        // setTimeout(() => {
+        //   this.removeChild(this.gameScene);
+        // }, 5000);
     };
-    Main.prototype.touchMove = function (event) {
-        var stageInfo = {
-            stageW: this.stage.stageWidth,
-            stageH: this.stage.stageHeight,
-            stageX: event.stageX,
-            stageY: event.stageY,
-        };
-        Utils.move(this.hero, stageInfo);
+    /**
+ * hero进入场景的处理事件
+ * @param event egret.Event
+ */
+    Main.prototype.HeroInStageRunBgEventHandle = function (event) {
+        event.stopImmediatePropagation();
+        console.log('runBg');
+        this.bgContent.runBg();
+        this.removeEventListener(HeroInStageRunBgEvent.HeroInStageRunBgEvent, this.HeroInStageRunBgEventHandle, this);
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
@@ -225,83 +215,6 @@ var Main = (function (_super) {
             tw.call(change, _this);
         };
         change();
-    };
-    /**
-     * hero自动开火
-     *
-     * @private
-     * @memberof Main
-     */
-    Main.prototype.autoOpenFire = function () {
-        this.autoOpenFireTimer.addEventListener(egret.TimerEvent.TIMER, this.autoAddBullet, this);
-        this.autoOpenFireTimer.start();
-    };
-    /**
-     * hero自动添加子弹
-     *
-     * @private
-     * @memberof Main
-     */
-    Main.prototype.autoAddBullet = function () {
-        var bullet = this.HeroFactory.createBullet();
-        this.hero.emitBullet(bullet);
-    };
-    /**
-     * 碰撞检测、子弹越界检测、敌机越界检测
-     *
-     * @private
-     * @memberof Main
-     */
-    Main.prototype.detect = function () {
-        this.addEventListener(egret.Event.ENTER_FRAME, this.heroBulletDetecHandle, this);
-    };
-    /**
-     * hero进入场景的处理事件
-     * @param event egret.Event
-     */
-    Main.prototype.HeroInStageRunBgEventHandle = function (event) {
-        event.stopImmediatePropagation();
-        this.bgContent.runBg();
-        this.removeEventListener(HeroInStageRunBgEvent.HeroInStageRunBgEvent, this.HeroInStageRunBgEventHandle, this);
-    };
-    Main.prototype.heroInStageAnimationEndHandle = function (event) {
-        event.stopImmediatePropagation();
-        this.touchEnabled = true;
-        this.autoOpenFire();
-        // 开始检测
-        this.detect();
-        // 删除监听事件
-        this.removeEventListener(HeroInStageAnimationEndEvent.heroInStageAnimationEnd, this.heroInStageAnimationEndHandle, this);
-    };
-    /**
-     *
-     *
-     * @private
-     * @memberof Main
-     */
-    Main.prototype.touchEndHandle = function () {
-        this.stage.removeEventListener(egret.TouchEvent.TOUCH_MOVE, this.touchMove, this);
-    };
-    /**
-     * hero子弹碰撞检测事件的处理方法
-     *
-     * @private
-     * @memberof Main
-     */
-    Main.prototype.heroBulletDetecHandle = function () {
-        var _this = this;
-        stageObjectCache.HeroBulletCache.forEach(function (item, index) {
-            // 判断当前子弹是否有父元素，如果没有，当前元素还没有被添加到舞台上，先不做处理。
-            if (!item.parent) {
-                return;
-            }
-            if (item.y < -item.height) {
-                stageObjectCache.HeroBulletCache.splice(index, 1);
-                _this.removeChild(item);
-                // 把item回收到heroBulletPool中
-                Pool.heroBulletPool.push(item);
-            }
-        });
     };
     return Main;
 }(egret.DisplayObjectContainer));

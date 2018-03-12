@@ -3,17 +3,23 @@
 class Hero extends PlaneBase implements IDispose {
   public life: number;
   private textureList: Array<egret.Texture>;
+  private blowUpTextureList: Array<egret.Texture>;
   public hero: egret.Bitmap;
   private timer: egret.Timer;
   public distance: IStageInfo;
+  public speed: number;
+  public explodeTimer: egret.Timer;
   constructor(armor: number) {
     super();
+    const shp:egret.Shape= new egret.Shape();
     this.life = GameConfig.hero.life;
-    // console.log(gameConfig);
+    this.state = PlaneState.existing;
+    this.speed = 0;
+    this.blowUpTextureList = new Array<egret.Texture>();
     this.init();
     this.addChild(this.hero);
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-    this.addEventListener(egret.Event.REMOVED, this.dispose, this);
+    this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
   private onAddToStage(event: egret.TouchEvent): void {
     // 初始位置
@@ -39,6 +45,10 @@ class Hero extends PlaneBase implements IDispose {
     ['hero1', 'hero2'].forEach((item, index) => {
       this.textureList.push(Utils.createBitmapByName(item));
     });
+    ['hero_blowup_n1','hero_blowup_n2','hero_blowup_n3','hero_blowup_n4'].forEach((item, index) => {
+      this.blowUpTextureList.push(Utils.createBitmapByName(item));
+    });
+    this.explodeTimer = new egret.Timer(200, 4)
     this.hero = new egret.Bitmap();
     this.hero.texture = this.textureList[0];
     this.timer = new egret.Timer(GameConfig.hero.planeToggleTimeSpan, GameConfig.hero.planeToggleCount);
@@ -65,8 +75,10 @@ class Hero extends PlaneBase implements IDispose {
   public emitBullet(bullet: BulletBase): void {
     bullet.x = this.x + this.width / 2 - bullet.width / 2;
     bullet.y = this.y + this.height / 2 - bullet.height / 2;
-    this.parent.addChild(bullet);
-    stageObjectCache.HeroBulletCache.push(bullet);
+    if(this.parent){
+      this.parent.addChild(bullet);
+    }
+    StageObjectCache.heroBulletCache.push(bullet);
     const heroBullet: ISound = bullet as HeroBullet;
     heroBullet.play();
     bullet.move(Direction.Up);
@@ -120,7 +132,6 @@ class Hero extends PlaneBase implements IDispose {
    * @memberof Hero
    */
   public move(stageInfo: IStageInfo): void {
-    console.log('move');
     const hero = this;
     const distance = this.distance;
     let x = stageInfo.stageX - distance.stageX;
@@ -153,6 +164,7 @@ class Hero extends PlaneBase implements IDispose {
     this.hero.texture = this.textureList[index];
   }
   public dispose(): void {
+    console.log('hero.ts dispose');
     this.removeEventListener(
       egret.TimerEvent.TIMER,
       this.toggleHeroBitMap,
@@ -163,6 +175,30 @@ class Hero extends PlaneBase implements IDispose {
       this.onAddToStage,
       this,
     );
-    this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+    this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
+
+  }
+  public explode() {
+    this.timer.stop();
+    this.explodeTimer.addEventListener(egret.TimerEvent.TIMER, this.explodeHandle, this);
+    this.explodeTimer.addEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
+    this.explodeTimer.start();
+  }
+  private explodeHandle(event: egret.TimerEvent):void {
+    const current = (event.target as egret.Timer).currentCount;
+    const index = current % 4;
+    this.hero.texture = this.blowUpTextureList[index];
+  }
+  private timerCompleteHandle() {
+    this.state = PlaneState.nonexistent;
+    this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER, this.explodeHandle, this);
+    this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
+    this.dispose();
+    if(this.parent){
+      this.parent.removeChild(this);
+    }
+  }
+  public reset() {
+
   }
 }

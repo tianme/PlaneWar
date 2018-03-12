@@ -21,7 +21,7 @@ var HeroBullet = (function (_super) {
         _this.width = _this.bullet.width;
         _this.height = _this.bullet.height;
         _this.addChild(_this.bullet);
-        _this.addEventListener(egret.Event.REMOVED, _this.dispose, _this);
+        _this.addEventListener(egret.Event.REMOVED_FROM_STAGE, _this.dispose, _this);
         return _this;
     }
     HeroBullet.prototype.play = function () {
@@ -53,8 +53,9 @@ var HeroBullet = (function (_super) {
         }
     };
     HeroBullet.prototype.dispose = function () {
+        // console.log('bullet.ts dispose');
         this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
-        this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+        this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
     };
     return HeroBullet;
 }(BulletBase));

@@ -21,7 +21,7 @@ var BgContent = (function (_super) {
         _this.bgUp.texture = texture;
         _this.bgDown.texture = texture;
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
-        _this.addEventListener(egret.Event.REMOVED, _this.dispose, _this);
+        _this.addEventListener(egret.Event.REMOVED_FROM_STAGE, _this.dispose, _this);
         return _this;
     }
     BgContent.prototype.onAddToStage = function () {
@@ -39,7 +39,7 @@ var BgContent = (function (_super) {
         this.addChild(this.bgDown);
         this.play();
         this.touchEnabled = true;
-        this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.touchPlay, this);
+        // this.addEventListener(egret.TouchEvent.TOUCH_TAP,this.touchPlay,this);
     };
     BgContent.prototype.runBg = function () {
         this.addEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
@@ -53,8 +53,8 @@ var BgContent = (function (_super) {
     BgContent.prototype.dispose = function () {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
         this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-        this.removeEventListener(egret.Event.REMOVED, this.touchPlay, this);
-        this.removeEventListener(egret.Event.REMOVED, this.dispose, this);
+        // this.removeEventListener(egret.Event.REMOVED,this.touchPlay,this);
+        this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
     };
     BgContent.prototype.play = function () {
         this.soundChannel = this.bgSound.play(this.channelPosition, -1);
@@ -66,11 +66,8 @@ var BgContent = (function (_super) {
         // 记录背景音乐播放的位置
         this.channelPosition = this.soundChannel.position;
         // 停止播放背景音乐
+        console.log('stop');
         this.soundChannel.stop();
-    };
-    BgContent.prototype.touchPlay = function () {
-        this.play();
-        this.touchEnabled = false;
     };
     return BgContent;
 }(egret.DisplayObjectContainer));

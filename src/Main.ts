@@ -28,28 +28,29 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 class Main extends egret.DisplayObjectContainer {
-  private hero: PlaneBase;
+
   private bgContent: BgContent;
-  private autoOpenFireTimer: egret.Timer;
-  private HeroFactory: AbstractFactory;
+  private gameScene: GameScene;
+
+  // private enemySmall: PlaneBase;
   public constructor() {
     super();
-    this.HeroFactory = HeroFactory.getInstance();
-    this.autoOpenFireTimer = new egret.Timer(300, 0);
+
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
   }
   private onAddToStage(event: egret.Event) {
     egret.lifecycle.addLifecycleListener(context => {
       // custom lifecycle plugin
 
-      context.onUpdate = () => {
-        // console.log(111);
-      };
+      context.onUpdate = () => {};
     });
 
     egret.lifecycle.onPause = () => {
       egret.ticker.pause();
       Utils.soundStop(this.bgContent);
+      console.log(StageObjectCache.heroBulletCache.length);
+      console.log(StageObjectCache.enemyCache.length);
+      console.log(Pool.enemySmallPool.length);
     };
 
     egret.lifecycle.onResume = () => {
@@ -58,20 +59,23 @@ class Main extends egret.DisplayObjectContainer {
     };
 
     this.runGame().catch(e => {
-      console.log(e);
+      // console.log(e);
     });
   }
 
   private async runGame() {
     await this.loadResource();
-    this.hero = this.HeroFactory.createPlane();
+
+
     this.bgContent = new BgContent();
+    this.gameScene = new GameScene();
     this.createGameScene();
+    // Pool.enemySmallPool = Utils.test();
     // const result = await RES.getResAsync("description_json")
     // this.startAnimation(result);
     await platform.login();
     const userInfo = await platform.getUserInfo();
-    console.log(userInfo);
+    // console.log(userInfo);
   }
 
   private async loadResource() {
@@ -93,57 +97,32 @@ class Main extends egret.DisplayObjectContainer {
    * Create a game scene
    */
   private createGameScene() {
-    const bgContent = this.bgContent;
-    this.addChild(bgContent);
-
-    const hero: PlaneBase = this.hero;
-
+    this.addChild(this.bgContent);
+    this.addChild(this.gameScene);
     this.addEventListener(
       HeroInStageRunBgEvent.HeroInStageRunBgEvent,
       this.HeroInStageRunBgEventHandle,
       this,
     );
-    this.addEventListener(
-      HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
-      this.heroInStageAnimationEndHandle,
-      this,
-    );
-
-    this.addChild(hero);
-    this.addEventListener(
-      egret.TouchEvent.TOUCH_BEGIN,
-      (event: egret.TouchEvent) => {
-        const stageInfo: IStageInfo = {
-          stageW: this.stage.stageWidth,
-          stageH: this.stage.stageHeight,
-          stageX: event.stageX,
-          stageY: event.stageY,
-        };
-        hero.setDistance(stageInfo);
-        this.stage.addEventListener(
-          egret.TouchEvent.TOUCH_MOVE,
-          this.touchMove,
-          this,
-        );
-      },
-      this,
-    );
-    this.addEventListener(
-      egret.TouchEvent.TOUCH_END,
-      this.touchEndHandle,
+    // setTimeout(() => {
+    //   this.removeChild(this.gameScene);
+    // }, 5000);
+  }
+      /**
+   * hero进入场景的处理事件
+   * @param event egret.Event
+   */
+  private HeroInStageRunBgEventHandle(event: egret.Event) {
+    event.stopImmediatePropagation();
+    console.log('runBg');
+    this.bgContent.runBg();
+    this.removeEventListener(
+      HeroInStageRunBgEvent.HeroInStageRunBgEvent,
+      this.HeroInStageRunBgEventHandle,
       this,
     );
   }
-  private touchMove(event: egret.TouchEvent) {
-    const stageInfo: IStageInfo = {
-      stageW: this.stage.stageWidth,
-      stageH: this.stage.stageHeight,
-      stageX: event.stageX,
-      stageY: event.stageY,
-    };
 
-    Utils.move(this.hero, stageInfo);
-  }
   /**
    * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
    * Create a Bitmap object according to name keyword.As for the property of name please refer to the configuration file of resources/resource.json.
@@ -183,104 +162,5 @@ class Main extends egret.DisplayObjectContainer {
     };
 
     change();
-  }
-  /**
-   * hero自动开火
-   *
-   * @private
-   * @memberof Main
-   */
-  private autoOpenFire() {
-    this.autoOpenFireTimer.addEventListener(
-      egret.TimerEvent.TIMER,
-      this.autoAddBullet,
-      this,
-    );
-    this.autoOpenFireTimer.start();
-  }
-  /**
-   * hero自动添加子弹
-   *
-   * @private
-   * @memberof Main
-   */
-  private autoAddBullet() {
-    const bullet = this.HeroFactory.createBullet();
-    this.hero.emitBullet(bullet);
-  }
-  /**
-   * 碰撞检测、子弹越界检测、敌机越界检测
-   *
-   * @private
-   * @memberof Main
-   */
-  private detect() {
-
-    this.addEventListener(
-      egret.Event.ENTER_FRAME,
-      this.heroBulletDetecHandle,
-      this,
-    );
-  }
-  /**
-   * hero进入场景的处理事件
-   * @param event egret.Event
-   */
-  private HeroInStageRunBgEventHandle(event: egret.Event) {
-    event.stopImmediatePropagation();
-    this.bgContent.runBg();
-    this.removeEventListener(
-      HeroInStageRunBgEvent.HeroInStageRunBgEvent,
-      this.HeroInStageRunBgEventHandle,
-      this
-    );
-  }
-  private heroInStageAnimationEndHandle(event: egret.Event) {
-    event.stopImmediatePropagation();
-    this.touchEnabled = true;
-    this.autoOpenFire();
-    // 开始检测
-    this.detect();
-    // 删除监听事件
-    this.removeEventListener(
-      HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
-      this.heroInStageAnimationEndHandle,
-      this,
-    );
-  }
-  /**
-   *
-   *
-   * @private
-   * @memberof Main
-   */
-  private touchEndHandle() {
-    this.stage.removeEventListener(
-      egret.TouchEvent.TOUCH_MOVE,
-      this.touchMove,
-      this,
-    );
-  }
-  /**
-   * hero子弹碰撞检测事件的处理方法
-   *
-   * @private
-   * @memberof Main
-   */
-  private heroBulletDetecHandle() {
-    stageObjectCache.HeroBulletCache.forEach((item,index) => {
-      // 判断当前子弹是否有父元素，如果没有，当前元素还没有被添加到舞台上，先不做处理。
-      if(!item.parent){
-        return;
-      }
-      if(item.y< -item.height){
-        stageObjectCache.HeroBulletCache.splice(index,1);
-
-        this.removeChild(item);
-        // 把item回收到heroBulletPool中
-        Pool.heroBulletPool.push(item);
-      }
-
-    });
   }
 }
