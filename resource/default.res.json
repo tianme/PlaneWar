@@ -6,7 +6,7 @@
       "name": "images"
     },
     {
-      "keys": "bgsound,bullet",
+      "keys": "bgsound,bullet,enemy1_down",
       "name": "sounds"
     }
   ],
@@ -85,6 +85,12 @@
       "name": "bullet",
       "type": "sound",
       "url": "sound/bullet.mp3"
+    },
+    {
+      "name": "enemy1_down",
+      "type": "sound",
+      "url": "sound/enemy1_down.mp3"
     }
+
   ]
 }

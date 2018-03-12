@@ -122,6 +122,7 @@ var GameScene = (function (_super) {
                 if (Utils.hitDetect(_this.hero, enemy) &&
                     enemy.state === PlaneState.existing &&
                     _this.hero.state === PlaneState.existing) {
+                    enemy.state = _this.hero.state = PlaneState.dispose;
                     console.log('game over');
                     _this.dispose();
                     enemy.explode();

@@ -145,6 +145,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
           enemy.state === PlaneState.existing &&
           this.hero.state === PlaneState.existing
         ) {
+          enemy.state = this.hero.state = PlaneState.dispose;
           console.log('game over');
           this.dispose();
 
