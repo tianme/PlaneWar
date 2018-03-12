@@ -48,9 +48,6 @@ class Main extends egret.DisplayObjectContainer {
     egret.lifecycle.onPause = () => {
       egret.ticker.pause();
       Utils.soundStop(this.bgContent);
-      console.log(StageObjectCache.heroBulletCache.length);
-      console.log(StageObjectCache.enemyCache.length);
-      console.log(Pool.enemySmallPool.length);
     };
 
     egret.lifecycle.onResume = () => {
