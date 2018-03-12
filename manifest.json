@@ -15,7 +15,7 @@
 		"bin-debug/GameConfig.js",
 		"bin-debug/Bullet/EnemyBullet.js",
 		"bin-debug/Bullet/HoreBullet.js",
-		"bin-debug/Cache/StageObjectCache.js",
+		"bin-debug/Cache/stageObjectCache.js",
 		"bin-debug/Enum/Direction.js",
 		"bin-debug/Enum/PlaneState.js",
 		"bin-debug/Event/HeroInStageAnimationEndEvent.js",

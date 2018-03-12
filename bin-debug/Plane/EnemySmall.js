@@ -18,8 +18,9 @@ var EnemySmall = (function (_super) {
             var texture = Utils.createBitmapByName("enemy1_down" + (i + 1));
             _this.textureList.push(texture);
         }
+        _this.channelPosition = 0;
+        _this.boom = Utils.createSoundByName('enemy1_down');
         _this.small = new egret.Bitmap();
-        // this.small.texture = Utils.createBitmapByName('enemy1');
         _this.addEventListener(egret.Event.ADDED, _this.addToStage, _this);
         _this.addEventListener(egret.Event.REMOVED_FROM_STAGE, _this.dispose, _this);
         return _this;
@@ -30,7 +31,6 @@ var EnemySmall = (function (_super) {
         this.x = this.stage.width / 2 + this.width / 2;
         this.y = -this.height;
         this.addChild(this.small);
-        // console.log('addEd');
         this.addEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
     };
     EnemySmall.prototype.emitBullet = function () { };
@@ -42,7 +42,7 @@ var EnemySmall = (function (_super) {
         this.move();
     };
     EnemySmall.prototype.explode = function () {
-        // this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
+        this.play();
         this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
         this.timer.addEventListener(egret.TimerEvent.TIMER, this.timerHandle, this);
         this.timer.addEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
@@ -57,16 +57,11 @@ var EnemySmall = (function (_super) {
         if (this.parent) {
             this.parent.removeChild(this);
         }
-        // this.visible = false;
-        // Pool.enemySmallPool.push(this);
-        // console.log(Pool.enemySmallPool);
         this.state = PlaneState.nonexistent;
         this.dispose();
     };
     EnemySmall.prototype.dispose = function () {
-        // console.log('enemySmall.ts dispose');
         this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
-        // this.removeEventListener(egret.Event.ADDED, this.addToStage, this);
         this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
         this.removeEventListener(egret.TimerEvent.TIMER, this.timerHandle, this);
         this.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
@@ -75,11 +70,22 @@ var EnemySmall = (function (_super) {
         this.life = 1;
         this.speed = 6;
         this.state = PlaneState.existing;
-        // this.visible = true;
     };
     EnemySmall.prototype.reset = function () {
         this.init();
     };
+    EnemySmall.prototype.play = function () {
+        this.soundChannel = this.boom.play(this.channelPosition, 1);
+    };
+    EnemySmall.prototype.stop = function () {
+        if (!this.soundChannel) {
+            return;
+        }
+        // 记录背景音乐播放的位置
+        this.channelPosition = this.soundChannel.position;
+        // 停止播放背景音乐
+        this.soundChannel.stop();
+    };
     return EnemySmall;
 }(PlaneBase));
-__reflect(EnemySmall.prototype, "EnemySmall", ["IDispose"]);
+__reflect(EnemySmall.prototype, "EnemySmall", ["IDispose", "ISound"]);

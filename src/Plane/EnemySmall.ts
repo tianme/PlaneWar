@@ -1,9 +1,13 @@
-class EnemySmall extends PlaneBase implements IDispose {
+class EnemySmall extends PlaneBase implements IDispose,ISound {
   public life: number;
   private small: egret.Bitmap;
   public speed: number;
   private timer: egret.Timer;
   private textureList: Array<egret.Texture>;
+  private channelPosition: number;
+  private soundChannel: egret.SoundChannel;
+  private direction: Direction;
+  private boom: egret.Sound;
   constructor() {
     super();
     this.init();
@@ -12,9 +16,9 @@ class EnemySmall extends PlaneBase implements IDispose {
       const texture = Utils.createBitmapByName(`enemy1_down${i + 1}`);
       this.textureList.push(texture);
     }
-
+    this.channelPosition = 0;
+    this.boom = Utils.createSoundByName('enemy1_down');
     this.small = new egret.Bitmap();
-    // this.small.texture = Utils.createBitmapByName('enemy1');
     this.addEventListener(egret.Event.ADDED, this.addToStage, this);
     this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
@@ -24,7 +28,6 @@ class EnemySmall extends PlaneBase implements IDispose {
     this.x = this.stage.width / 2 + this.width / 2;
     this.y = -this.height;
     this.addChild(this.small);
-    // console.log('addEd');
     this.addEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
   }
   public emitBullet() {}
@@ -36,7 +39,7 @@ class EnemySmall extends PlaneBase implements IDispose {
     this.move();
   }
   public explode() {
-    // this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
+    this.play();
     this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
     this.timer.addEventListener(egret.TimerEvent.TIMER, this.timerHandle, this);
     this.timer.addEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle,this);
@@ -52,16 +55,11 @@ class EnemySmall extends PlaneBase implements IDispose {
     if(this.parent){
       this.parent.removeChild(this);
     }
-    // this.visible = false;
-    // Pool.enemySmallPool.push(this);
-    // console.log(Pool.enemySmallPool);
     this.state = PlaneState.nonexistent;
     this.dispose();
   }
   public dispose() {
-    // console.log('enemySmall.ts dispose');
     this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
-    // this.removeEventListener(egret.Event.ADDED, this.addToStage, this);
     this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
     this.removeEventListener(egret.TimerEvent.TIMER, this.timerHandle, this);
     this.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle,this);
@@ -70,10 +68,20 @@ class EnemySmall extends PlaneBase implements IDispose {
     this.life = 1;
     this.speed = 6;
     this.state = PlaneState.existing;
-
-    // this.visible = true;
   }
   public reset() {
     this.init();
+  }
+  public play() {
+    this.soundChannel = this.boom.play(this.channelPosition, 1);
+  }
+  public stop() {
+    if (!this.soundChannel) {
+      return;
+    }
+    // 记录背景音乐播放的位置
+    this.channelPosition = this.soundChannel.position;
+    // 停止播放背景音乐
+    this.soundChannel.stop();
   }
 }
