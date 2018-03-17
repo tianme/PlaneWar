@@ -6,8 +6,8 @@ class EnemyCenter extends PlaneBase implements IDispose, ISound {
   private textureList: Array<egret.Texture>;
   private timer: egret.Timer;
   private boom: egret.Sound;
-  private channelPosition:number;
-  private soundChannel:egret.SoundChannel;
+  private channelPosition: number;
+  private soundChannel: egret.SoundChannel;
   constructor() {
     super();
     this.planeType = PlaneType.centerType;
@@ -17,17 +17,14 @@ class EnemyCenter extends PlaneBase implements IDispose, ISound {
     this.boom = Utils.createSoundByName('enemy2_down');
 
     this.channelPosition = 0;
-    [
-      'enemy2_down1',
-      'enemy2_down2',
-      'enemy2_down3',
-      'enemy2_down4',
-    ].forEach((item) => {
-      const texture = Utils.createBitmapByName(item);
-      this.textureList.push(texture);
-    });
+    ['enemy2_down1', 'enemy2_down2', 'enemy2_down3', 'enemy2_down4'].forEach(
+      item => {
+        const texture = Utils.createBitmapByName(item);
+        this.textureList.push(texture);
+      },
+    );
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.AddToStage, this);
-    this.addEventListener(egret.Event.REMOVED_FROM_STAGE,this.dispose,this);
+    this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
   private init() {
     this.life = 3;
@@ -47,8 +44,12 @@ class EnemyCenter extends PlaneBase implements IDispose, ISound {
   public explode(): void {
     this.play();
     this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
-    this.timer.addEventListener(egret.TimerEvent.TIMER,this.timerHandle,this);
-    this.timer.addEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle,this);
+    this.timer.addEventListener(egret.TimerEvent.TIMER, this.timerHandle, this);
+    this.timer.addEventListener(
+      egret.TimerEvent.TIMER_COMPLETE,
+      this.timerCompleteHandle,
+      this,
+    );
     this.timer.start();
   }
   public move(): void {
@@ -60,9 +61,17 @@ class EnemyCenter extends PlaneBase implements IDispose, ISound {
   public setDistance(): void {}
   public dispose(): void {
     this.removeEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);
-    this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
+    this.removeEventListener(
+      egret.Event.REMOVED_FROM_STAGE,
+      this.dispose,
+      this,
+    );
     this.removeEventListener(egret.TimerEvent.TIMER, this.timerHandle, this);
-    this.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle,this);
+    this.removeEventListener(
+      egret.TimerEvent.TIMER_COMPLETE,
+      this.timerCompleteHandle,
+      this,
+    );
   }
   public play(): void {
     this.soundChannel = this.boom.play(this.channelPosition, 1);
@@ -77,16 +86,16 @@ class EnemyCenter extends PlaneBase implements IDispose, ISound {
     // 停止播放背景音乐
     this.soundChannel.stop();
   }
-  private frameHandle(){
+  private frameHandle() {
     this.move();
   }
-  private timerHandle(event:egret.TimerEvent) {
+  private timerHandle(event: egret.TimerEvent) {
     const current = (event.target as egret.Timer).currentCount;
     const index = current % 4;
     this.centerEnemy.texture = this.textureList[index];
   }
   private timerCompleteHandle() {
-    if(this.parent){
+    if (this.parent) {
       this.parent.removeChild(this);
     }
     this.state = PlaneState.nonexistent;
