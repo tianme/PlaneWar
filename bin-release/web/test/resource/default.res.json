@@ -2,11 +2,11 @@
   "groups": [
     {
       "keys":
-        "background,hero1,hero2,bullet1,enemy1,enemy1_down1,enemy1_down2,enemy1_down3,enemy1_down4,hero_blowup_n1,hero_blowup_n2,hero_blowup_n3,hero_blowup_n4",
+        "background,hero1,hero2,bullet1,enemy1,enemy1_down1,enemy1_down2,enemy1_down3,enemy1_down4,hero_blowup_n1,hero_blowup_n2,hero_blowup_n3,hero_blowup_n4,enemy2,enemy2_down1,enemy2_down2,enemy2_down3,enemy2_down4",
       "name": "images"
     },
     {
-      "keys": "bgsound,bullet",
+      "keys": "bgsound,bullet,enemy1_down,enemy2_down",
       "name": "sounds"
     }
   ],
@@ -85,6 +85,42 @@
       "name": "bullet",
       "type": "sound",
       "url": "sound/bullet.mp3"
+    },
+    {
+      "name": "enemy1_down",
+      "type": "sound",
+      "url": "sound/enemy1_down.mp3"
+    },
+    {
+      "name": "enemy2",
+      "type": "image",
+      "url": "assets/enemy2.png"
+    },
+    {
+      "name": "enemy2_down1",
+      "type": "image",
+      "url": "assets/enemy2_down1.png"
+    },
+    {
+      "name": "enemy2_down2",
+      "type": "image",
+      "url": "assets/enemy2_down2.png"
+    },
+    {
+      "name": "enemy2_down3",
+      "type": "image",
+      "url": "assets/enemy2_down3.png"
+    },
+    {
+      "name": "enemy2_down4",
+      "type": "image",
+      "url": "assets/enemy2_down4.png"
+    },
+    {
+      "name": "enemy2_down",
+      "type": "sound",
+      "url": "sound/enemy2_down.mp3"
     }
+
   ]
 }
