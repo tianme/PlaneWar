@@ -17,6 +17,7 @@ var Hero = (function (_super) {
         _this.state = PlaneState.existing;
         _this.speed = 0;
         _this.blowUpTextureList = new Array();
+        _this.planeType = PlaneType.general;
         _this.init();
         _this.addChild(_this.hero);
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);

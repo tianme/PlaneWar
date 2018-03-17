@@ -60,7 +60,7 @@ class BgContent extends egret.DisplayObjectContainer
 
   public play() {
     this.soundChannel = this.bgSound.play(this.channelPosition, -1);
-
+    this.soundChannel.volume = .5;
   }
   public stop() {
     if (!this.soundChannel) {

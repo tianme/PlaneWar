@@ -16,11 +16,7 @@ var EnemySmallFactory = (function (_super) {
     EnemySmallFactory.prototype.createPlane = function () {
         // 通过enemySmallPool中拿enemySmall
         var enemySmall = Pool.enemySmallPool.shift();
-        // console.log(enemySmall)
-        // const enemySmall = null;
-        // 如果enemySmall则创建enemySmall
         if (!enemySmall) {
-            egret.log('test');
             return new EnemySmall();
         }
         return enemySmall;

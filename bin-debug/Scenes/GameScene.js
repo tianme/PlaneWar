@@ -14,6 +14,7 @@ var GameScene = (function (_super) {
         var _this = _super.call(this) || this;
         _this.heroFactory = HeroFactory.getInstance();
         _this.enemySmallFactory = new EnemySmallFactory();
+        _this.enemyCenterFactory = new EnemyCenterFactory();
         _this.autoOpenFireTimer = new egret.Timer(200, 0);
         _this.addEnemyTimer = new egret.Timer(1000, 0);
         _this.hero = _this.heroFactory.createPlane();
@@ -98,7 +99,7 @@ var GameScene = (function (_super) {
             if (!item.parent) {
                 return;
             }
-            if (item.y <= 50) {
+            if (item.y <= 0) {
                 Pool.heroBulletPool.push(item);
                 StageObjectCache.heroBulletCache.splice(index, 1);
                 _this.removeChild(item);
@@ -107,14 +108,15 @@ var GameScene = (function (_super) {
             StageObjectCache.enemyCache.forEach(function (enemy, i) {
                 if (Utils.hitDetect(item, enemy) &&
                     enemy.state === PlaneState.existing) {
-                    enemy.state = PlaneState.dispose;
                     if (item.parent) {
                         item.parent.removeChild(item);
                         Pool.heroBulletPool.push(item);
                         StageObjectCache.heroBulletCache.splice(index, 1);
                     }
                     enemy.life -= item.power;
+                    // console.log(enemy.life);
                     if (enemy.life <= 0) {
+                        enemy.state = PlaneState.dispose;
                         enemy.explode();
                     }
                 }
@@ -131,12 +133,13 @@ var GameScene = (function (_super) {
             });
         });
         var count = StageObjectCache.enemyCache.length;
+        // 回收飞机
         for (var i = 0; i < count; i++) {
             var enemy = StageObjectCache.enemyCache[i];
-            if (enemy.y > this.stage.stageHeight + enemy.height
-                || enemy.state === PlaneState.nonexistent) {
+            if (enemy.y > this.stage.stageHeight + enemy.height ||
+                enemy.state === PlaneState.nonexistent) {
                 StageObjectCache.enemyCache.splice(i, 1);
-                Pool.enemySmallPool.push(enemy);
+                this.recover(enemy);
                 i--;
                 enemy.reset();
                 count--;
@@ -155,15 +158,27 @@ var GameScene = (function (_super) {
     GameScene.prototype.addEnemyPlane = function () {
         this.addEnemyTimer.addEventListener(egret.TimerEvent.TIMER, this.addEnemyTimerHandle, this);
         this.addEnemyTimer.start();
+        // 记录下时间
+        // this.timertest = new Date().getTime();
     };
     GameScene.prototype.addEnemyTimerHandle = function () {
-        var enemySmall = this.enemySmallFactory.createPlane();
-        this.addChild(enemySmall);
-        var xMin = 0 - enemySmall.width / 2;
-        var xMax = this.stage.stageWidth - enemySmall.width / 2;
-        enemySmall.x = this.randomRange(xMin, xMax);
-        enemySmall.y = -enemySmall.height;
-        StageObjectCache.enemyCache.push(enemySmall);
+        var enemy = this.getEnemy();
+        this.addChild(enemy);
+        var xMin = 0 - enemy.width / 2;
+        var xMax = this.stage.stageWidth - enemy.width / 2;
+        enemy.x = this.randomRange(xMin, xMax);
+        enemy.y = -enemy.height;
+        StageObjectCache.enemyCache.push(enemy);
+    };
+    GameScene.prototype.getEnemy = function () {
+        var number = this.randomRange(1, 100);
+        if (number < 50) {
+            return this.enemySmallFactory.createPlane();
+        }
+        else if (number < 90) {
+            return this.enemyCenterFactory.createPlane();
+        }
+        return this.enemySmallFactory.createPlane();
     };
     GameScene.prototype.touchBeginHandle = function (event) {
         var stageInfo = {
@@ -189,6 +204,25 @@ var GameScene = (function (_super) {
         this.addEnemyTimer.removeEventListener(egret.TimerEvent.TIMER, this.addEnemyTimerHandle, this);
         this.autoOpenFireTimer.removeEventListener(egret.TimerEvent.TIMER, this.autoAddBullet, this);
         this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
+    };
+    /**
+     * 回收敌机
+     *
+     * @memberof GameScene
+     */
+    GameScene.prototype.recover = function (enemy) {
+        switch (enemy.planeType) {
+            case PlaneType.smallType:
+                Pool.enemySmallPool.push(enemy);
+                break;
+            case PlaneType.centerType:
+                Pool.enemyCenterPool.push(enemy);
+                break;
+            case PlaneType.bigType:
+                break;
+            default:
+                break;
+        }
     };
     return GameScene;
 }(egret.DisplayObjectContainer));

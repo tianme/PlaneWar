@@ -3,11 +3,13 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
   private autoOpenFireTimer: egret.Timer;
   private heroFactory: AbstractFactory;
   private enemySmallFactory: AbstractFactory;
+  private enemyCenterFactory: AbstractFactory;
   private addEnemyTimer: egret.Timer;
   constructor() {
     super();
     this.heroFactory = HeroFactory.getInstance();
     this.enemySmallFactory = new EnemySmallFactory();
+    this.enemyCenterFactory = new EnemyCenterFactory();
     this.autoOpenFireTimer = new egret.Timer(200, 0);
     this.addEnemyTimer = new egret.Timer(1000, 0);
     this.hero = this.heroFactory.createPlane();
@@ -117,7 +119,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
       if (!item.parent) {
         return;
       }
-      if (item.y <= 50) {
+      if (item.y <= 0) {
         Pool.heroBulletPool.push(item);
         StageObjectCache.heroBulletCache.splice(index, 1);
         this.removeChild(item);
@@ -128,14 +130,16 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
           Utils.hitDetect(item, enemy) &&
           enemy.state === PlaneState.existing
         ) {
-          enemy.state = PlaneState.dispose;
+
           if (item.parent) {
             item.parent.removeChild(item);
             Pool.heroBulletPool.push(item);
             StageObjectCache.heroBulletCache.splice(index, 1);
           }
           enemy.life -= item.power;
+          // console.log(enemy.life);
           if (enemy.life <= 0) {
+            enemy.state = PlaneState.dispose;
             enemy.explode();
           }
         }
@@ -155,25 +159,25 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
       });
     });
     let count: number = StageObjectCache.enemyCache.length;
-
+    // 回收飞机
     for (let i = 0; i < count; i++) {
       const enemy = StageObjectCache.enemyCache[i];
       if (
-        enemy.y > this.stage.stageHeight + enemy.height
-        || enemy.state === PlaneState.nonexistent
+        enemy.y > this.stage.stageHeight + enemy.height ||
+        enemy.state === PlaneState.nonexistent
       ) {
         StageObjectCache.enemyCache.splice(i, 1);
-        Pool.enemySmallPool.push(enemy);
+        this.recover(enemy);
         i--;
         enemy.reset();
         count--;
-
       }
     }
   }
   private randomRange(xMin: number, xMax: number) {
     return Math.floor(Math.random() * (xMax - xMin + 1) + xMin);
   }
+  private timertest:number;
   /**
    * 添加敌机
    *
@@ -187,17 +191,29 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
       this,
     );
     this.addEnemyTimer.start();
+    // 记录下时间
+    // this.timertest = new Date().getTime();
   }
   private addEnemyTimerHandle() {
-    const enemySmall = this.enemySmallFactory.createPlane();
-    this.addChild(enemySmall);
-    const xMin = 0 - enemySmall.width / 2;
-    const xMax = this.stage.stageWidth - enemySmall.width / 2;
-    enemySmall.x = this.randomRange(xMin, xMax);
-    enemySmall.y = -enemySmall.height;
-    StageObjectCache.enemyCache.push(enemySmall);
-  }
 
+
+    const enemy = this.getEnemy();
+    this.addChild(enemy);
+    const xMin = 0 - enemy.width / 2;
+    const xMax = this.stage.stageWidth - enemy.width / 2;
+    enemy.x = this.randomRange(xMin, xMax);
+    enemy.y = -enemy.height;
+    StageObjectCache.enemyCache.push(enemy);
+  }
+  private getEnemy(): PlaneBase {
+    const number = this.randomRange(1, 100);
+    if(number <50){
+      return this.enemySmallFactory.createPlane();
+    }else if(number <90){
+      return this.enemyCenterFactory.createPlane();
+    }
+    return this.enemySmallFactory.createPlane();
+  }
   private touchBeginHandle(event: egret.TouchEvent) {
     const stageInfo: IStageInfo = {
       stageW: this.stage.stageWidth,
@@ -217,7 +233,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
    *
    * @memberof GameScene
    */
-  public dispose() {
+  public dispose(): void {
     this.removeEventListener(
       HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
       this.heroInStageAnimationEndHandle,
@@ -249,6 +265,29 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
       this.autoAddBullet,
       this,
     );
-    this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
+    this.removeEventListener(
+      egret.Event.REMOVED_FROM_STAGE,
+      this.dispose,
+      this,
+    );
+  }
+  /**
+   * 回收敌机
+   *
+   * @memberof GameScene
+   */
+  public recover(enemy: PlaneBase): void {
+    switch (enemy.planeType) {
+      case PlaneType.smallType:
+        Pool.enemySmallPool.push(enemy);
+        break;
+      case PlaneType.centerType:
+        Pool.enemyCenterPool.push(enemy);
+        break;
+      case PlaneType.bigType:
+        break;
+      default:
+        break;
+    }
   }
 }
