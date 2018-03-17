@@ -58,6 +58,7 @@ var BgContent = (function (_super) {
     };
     BgContent.prototype.play = function () {
         this.soundChannel = this.bgSound.play(this.channelPosition, -1);
+        this.soundChannel.volume = .5;
     };
     BgContent.prototype.stop = function () {
         if (!this.soundChannel) {

@@ -22,6 +22,9 @@ abstract class PlaneBase extends egret.DisplayObjectContainer{
 
   // 飞机状态
   public state: PlaneState = PlaneState.existing;
+  // 重置飞机状态
   public abstract reset():void;
+  // 飞机类型
+  public abstract planeType: PlaneType;
 
 }

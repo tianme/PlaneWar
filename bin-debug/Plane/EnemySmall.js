@@ -13,6 +13,7 @@ var EnemySmall = (function (_super) {
     function EnemySmall() {
         var _this = _super.call(this) || this;
         _this.init();
+        _this.planeType = PlaneType.smallType;
         _this.textureList = new Array();
         for (var i = 0; i < 4; i++) {
             var texture = Utils.createBitmapByName("enemy1_down" + (i + 1));
@@ -28,7 +29,7 @@ var EnemySmall = (function (_super) {
     EnemySmall.prototype.addToStage = function (event) {
         this.timer = new egret.Timer(200, 4);
         this.small.texture = Utils.createBitmapByName('enemy1');
-        this.x = this.stage.width / 2 + this.width / 2;
+        this.x = this.stage.width / 2 - this.width / 2;
         this.y = -this.height;
         this.addChild(this.small);
         this.addEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);

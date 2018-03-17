@@ -8,9 +8,11 @@ class EnemySmall extends PlaneBase implements IDispose,ISound {
   private soundChannel: egret.SoundChannel;
   private direction: Direction;
   private boom: egret.Sound;
+  public planeType: PlaneType;
   constructor() {
     super();
     this.init();
+    this.planeType = PlaneType.smallType;
     this.textureList = new Array<egret.Texture>();
     for (let i = 0; i < 4; i++) {
       const texture = Utils.createBitmapByName(`enemy1_down${i + 1}`);
@@ -25,7 +27,7 @@ class EnemySmall extends PlaneBase implements IDispose,ISound {
   private addToStage(event: egret.Event) {
     this.timer = new egret.Timer(200, 4);
     this.small.texture = Utils.createBitmapByName('enemy1');
-    this.x = this.stage.width / 2 + this.width / 2;
+    this.x = this.stage.width / 2 - this.width / 2;
     this.y = -this.height;
     this.addChild(this.small);
     this.addEventListener(egret.Event.ENTER_FRAME, this.frameHandle, this);

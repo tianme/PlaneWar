@@ -9,6 +9,7 @@ class Hero extends PlaneBase implements IDispose {
   public distance: IStageInfo;
   public speed: number;
   public explodeTimer: egret.Timer;
+  public planeType: PlaneType;
   constructor(armor: number) {
     super();
     const shp:egret.Shape= new egret.Shape();
@@ -16,6 +17,7 @@ class Hero extends PlaneBase implements IDispose {
     this.state = PlaneState.existing;
     this.speed = 0;
     this.blowUpTextureList = new Array<egret.Texture>();
+    this.planeType = PlaneType.general;
     this.init();
     this.addChild(this.hero);
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);

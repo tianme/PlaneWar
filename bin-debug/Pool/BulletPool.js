@@ -7,6 +7,7 @@ var Pool = (function () {
     Pool.heroBulletPool = new Array();
     Pool.enemyBulletPool = new Array();
     Pool.enemySmallPool = new Array();
+    Pool.enemyCenterPool = new Array();
     return Pool;
 }());
 __reflect(Pool.prototype, "Pool");
