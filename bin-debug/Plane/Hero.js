@@ -12,19 +12,21 @@ var Hero = (function (_super) {
     __extends(Hero, _super);
     function Hero(armor) {
         var _this = _super.call(this) || this;
+        _this.score = 0;
+        _this.gameOverEvent = new GameOverEvent(GameOverEvent.gameOverEvent);
         var shp = new egret.Shape();
-        _this.life = GameConfig.hero.life;
-        _this.state = PlaneState.existing;
+        _this.hero = new egret.Bitmap();
         _this.speed = 0;
         _this.blowUpTextureList = new Array();
         _this.planeType = PlaneType.general;
-        _this.init();
-        _this.addChild(_this.hero);
         _this.addEventListener(egret.Event.ADDED_TO_STAGE, _this.onAddToStage, _this);
         _this.addEventListener(egret.Event.REMOVED_FROM_STAGE, _this.dispose, _this);
         return _this;
     }
     Hero.prototype.onAddToStage = function (event) {
+        // console.log('hero in stage');
+        this.init();
+        this.addChild(this.hero);
         // 初始位置
         this.initPosition();
         // 切换
@@ -37,6 +39,8 @@ var Hero = (function (_super) {
      */
     Hero.prototype.init = function () {
         var _this = this;
+        this.life = GameConfig.hero.life;
+        this.state = PlaneState.existing;
         // 初始化distance
         this.distance = {
             stageW: 0,
@@ -53,7 +57,6 @@ var Hero = (function (_super) {
             _this.blowUpTextureList.push(Utils.createBitmapByName(item));
         });
         this.explodeTimer = new egret.Timer(200, 4);
-        this.hero = new egret.Bitmap();
         this.hero.texture = this.textureList[0];
         this.timer = new egret.Timer(GameConfig.hero.planeToggleTimeSpan, GameConfig.hero.planeToggleCount);
         this.width = this.hero.width;
@@ -113,13 +116,13 @@ var Hero = (function (_super) {
         egret.Tween.get(this)
             .to({ y: y }, GameConfig.hero.inStageAnimationTime, egret.Ease.sineInOut)
             .call(function () {
-            console.log('hero背景执行');
+            // console.log('hero背景执行');
             // 动画结束发送事件
             _this.dispatchEvent(heroInStageRunBgEvent);
         })
             .to({ y: stageH - 200 }, GameConfig.hero.inStageAnimationTimeEnd, egret.Ease.sineInOut)
             .call(function () {
-            console.log('hero动画全部结束');
+            // console.log('hero动画全部结束');
             _this.dispatchEvent(heroInStageAnimationEnd);
         });
     };
@@ -158,10 +161,18 @@ var Hero = (function (_super) {
         this.hero.texture = this.textureList[index];
     };
     Hero.prototype.dispose = function () {
-        console.log('hero.ts dispose');
+        // console.log('hero.ts dispose');
+        this.gameOverEvent.data = GameConfig.countScore;
+        this.dispatchEvent(this.gameOverEvent);
         this.removeEventListener(egret.TimerEvent.TIMER, this.toggleHeroBitMap, this);
-        this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-        this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
+        // this.removeEventListener(
+        //   egret.Event.ADDED_TO_STAGE,
+        //   this.onAddToStage,
+        //   this,
+        // );
+        this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER, this.explodeHandle, this);
+        this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
+        // this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
     };
     Hero.prototype.explode = function () {
         this.timer.stop();
@@ -178,12 +189,13 @@ var Hero = (function (_super) {
         this.state = PlaneState.nonexistent;
         this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER, this.explodeHandle, this);
         this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
-        this.dispose();
         if (this.parent) {
             this.parent.removeChild(this);
         }
+        this.dispose();
     };
     Hero.prototype.reset = function () {
+        this.init();
     };
     return Hero;
 }(PlaneBase));

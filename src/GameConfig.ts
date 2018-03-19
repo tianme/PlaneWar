@@ -20,10 +20,11 @@ class GameConfig {
     life: 1,
     planeToggleTimeSpan: 300,
     planeToggleCount: 0,
-    inStageAnimationTime: 0, // 1000
-    inStageAnimationTimeEnd: 0, // 3000
+    inStageAnimationTime: 1000, // 1000
+    inStageAnimationTimeEnd: 3000, // 3000
   };
   public static bg: IBG = {
     speed: 2,
   }
+  public static countScore = 0;
 }

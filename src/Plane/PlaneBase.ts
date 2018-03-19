@@ -26,5 +26,6 @@ abstract class PlaneBase extends egret.DisplayObjectContainer{
   public abstract reset():void;
   // 飞机类型
   public abstract planeType: PlaneType;
+  public abstract score: number;
 
 }

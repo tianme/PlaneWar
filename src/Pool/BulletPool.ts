@@ -3,4 +3,5 @@ class Pool{
   public static enemyBulletPool:Array<BulletBase> = new Array<BulletBase>();
   public static enemySmallPool:Array<PlaneBase> = new Array<PlaneBase>();
   public static enemyCenterPool: Array<PlaneBase> = new Array<PlaneBase>();
+  public static enemyBigPool: Array<PlaneBase> = new Array<PlaneBase>();
 }

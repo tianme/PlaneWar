@@ -7,6 +7,7 @@ class EnemySmallFactory extends AbstractFactory{
     const enemySmall = Pool.enemySmallPool.shift();
 
     if(!enemySmall){
+      // console.log('小飞机');
       return new EnemySmall();
     }
     return enemySmall;

@@ -13,7 +13,7 @@ class HeroBullet extends BulletBase implements ISound, IDispose {
     this.power = 1;
     this.channelPosition = 0;
     this.bullet = new egret.Bitmap();
-    this.bullet.texture = Utils.createBitmapByName('bullet1');
+    this.bullet.texture = Utils.createBitmapByName('bullet2');
     this.bulletSound = Utils.createSoundByName('bullet');
     this.width = this.bullet.width;
     this.height = this.bullet.height;

@@ -8,9 +8,13 @@ class EnemyCenter extends PlaneBase implements IDispose, ISound {
   private boom: egret.Sound;
   private channelPosition: number;
   private soundChannel: egret.SoundChannel;
+  private lifeCount:number;
+  public score: number
   constructor() {
     super();
+    this.lifeCount = 4;
     this.planeType = PlaneType.centerType;
+    this.score = 2000;
     this.textureList = new Array<egret.Texture>();
     this.init();
     this.centerEnemy = new egret.Bitmap();
@@ -27,7 +31,7 @@ class EnemyCenter extends PlaneBase implements IDispose, ISound {
     this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
   private init() {
-    this.life = 3;
+    this.life = this.lifeCount;
     this.speed = 4;
     this.state = PlaneState.existing;
   }
@@ -54,6 +58,9 @@ class EnemyCenter extends PlaneBase implements IDispose, ISound {
   }
   public move(): void {
     this.y += this.speed;
+    if(this.life< this.lifeCount/2){
+      this.centerEnemy.texture = Utils.createBitmapByName('enemy2_hit');
+    }
   }
   public reset(): void {
     this.init();

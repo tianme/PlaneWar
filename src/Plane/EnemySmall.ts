@@ -9,9 +9,11 @@ class EnemySmall extends PlaneBase implements IDispose,ISound {
   private direction: Direction;
   private boom: egret.Sound;
   public planeType: PlaneType;
+  public score:number;
   constructor() {
     super();
     this.init();
+    this.score = 500;
     this.planeType = PlaneType.smallType;
     this.textureList = new Array<egret.Texture>();
     for (let i = 0; i < 4; i++) {

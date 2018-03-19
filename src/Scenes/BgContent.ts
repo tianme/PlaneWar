@@ -43,24 +43,20 @@ class BgContent extends egret.DisplayObjectContainer
   }
   private moveBg() {
     this.y += this.config.speed;
-    if (this.y >= this.stage.stageHeight) {
+    if (this.stage && this.y >= this.stage.stageHeight) {
       this.y = 0;
     }
   }
   public dispose() {
+    this.stop();
     this.removeEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
-    this.removeEventListener(
-      egret.Event.ADDED_TO_STAGE,
-      this.onAddToStage,
-      this,
-    );
-    // this.removeEventListener(egret.Event.REMOVED,this.touchPlay,this);
+
     this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
 
   public play() {
     this.soundChannel = this.bgSound.play(this.channelPosition, -1);
-    this.soundChannel.volume = .5;
+    this.soundChannel.volume = .3;
   }
   public stop() {
     if (!this.soundChannel) {

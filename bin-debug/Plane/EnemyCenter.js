@@ -12,18 +12,15 @@ var EnemyCenter = (function (_super) {
     __extends(EnemyCenter, _super);
     function EnemyCenter() {
         var _this = _super.call(this) || this;
+        _this.lifeCount = 4;
         _this.planeType = PlaneType.centerType;
+        _this.score = 2000;
         _this.textureList = new Array();
         _this.init();
         _this.centerEnemy = new egret.Bitmap();
         _this.boom = Utils.createSoundByName('enemy2_down');
         _this.channelPosition = 0;
-        [
-            'enemy2_down1',
-            'enemy2_down2',
-            'enemy2_down3',
-            'enemy2_down4',
-        ].forEach(function (item) {
+        ['enemy2_down1', 'enemy2_down2', 'enemy2_down3', 'enemy2_down4'].forEach(function (item) {
             var texture = Utils.createBitmapByName(item);
             _this.textureList.push(texture);
         });
@@ -32,7 +29,7 @@ var EnemyCenter = (function (_super) {
         return _this;
     }
     EnemyCenter.prototype.init = function () {
-        this.life = 3;
+        this.life = this.lifeCount;
         this.speed = 4;
         this.state = PlaneState.existing;
     };
@@ -55,6 +52,9 @@ var EnemyCenter = (function (_super) {
     };
     EnemyCenter.prototype.move = function () {
         this.y += this.speed;
+        if (this.life < this.lifeCount / 2) {
+            this.centerEnemy.texture = Utils.createBitmapByName('enemy2_hit');
+        }
     };
     EnemyCenter.prototype.reset = function () {
         this.init();

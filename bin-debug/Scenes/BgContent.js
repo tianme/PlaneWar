@@ -46,19 +46,18 @@ var BgContent = (function (_super) {
     };
     BgContent.prototype.moveBg = function () {
         this.y += this.config.speed;
-        if (this.y >= this.stage.stageHeight) {
+        if (this.stage && this.y >= this.stage.stageHeight) {
             this.y = 0;
         }
     };
     BgContent.prototype.dispose = function () {
+        this.stop();
         this.removeEventListener(egret.Event.ENTER_FRAME, this.moveBg, this);
-        this.removeEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
-        // this.removeEventListener(egret.Event.REMOVED,this.touchPlay,this);
         this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
     };
     BgContent.prototype.play = function () {
         this.soundChannel = this.bgSound.play(this.channelPosition, -1);
-        this.soundChannel.volume = .5;
+        this.soundChannel.volume = .3;
     };
     BgContent.prototype.stop = function () {
         if (!this.soundChannel) {

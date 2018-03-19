@@ -16,6 +16,7 @@ var EnemyCenterFactory = (function (_super) {
     EnemyCenterFactory.prototype.createPlane = function () {
         var enemyCenter = Pool.enemyCenterPool.shift();
         if (!enemyCenter) {
+            // console.log('中飞机');
             return new EnemyCenter();
         }
         return enemyCenter;
