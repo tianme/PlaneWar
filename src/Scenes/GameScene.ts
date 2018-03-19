@@ -4,20 +4,38 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
   private heroFactory: AbstractFactory;
   private enemySmallFactory: AbstractFactory;
   private enemyCenterFactory: AbstractFactory;
+  private enemyBigFactory: AbstractFactory
   private addEnemyTimer: egret.Timer;
+  private countScoreTextField: egret.TextField;
+  private touchFlag:boolean;
+
   constructor() {
     super();
+
     this.heroFactory = HeroFactory.getInstance();
     this.enemySmallFactory = new EnemySmallFactory();
     this.enemyCenterFactory = new EnemyCenterFactory();
+    this.enemyBigFactory = new EnemyBigFactory();
     this.autoOpenFireTimer = new egret.Timer(200, 0);
     this.addEnemyTimer = new egret.Timer(1000, 0);
     this.hero = this.heroFactory.createPlane();
+    this.countScoreTextField = new egret.TextField();
+    this.countScoreTextField.height = 40;
+    this.countScoreTextField.textColor = 0x000000;
+
+
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.addToStage, this);
     this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
   private addToStage() {
+    this.touchEnabled = false;
+    this.removeChildren();
+    this.touchFlag = false;
     this.addChild(this.hero);
+    this.countScoreTextField.text = GameConfig.countScore.toString();
+    this.countScoreTextField.x = this.stage.stageWidth / 2 - this.countScoreTextField.width / 2;
+    this.countScoreTextField.y = 0;
+    this.addChild(this.countScoreTextField);
     this.addEventListener(
       HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
       this.heroInStageAnimationEndHandle,
@@ -35,6 +53,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
     );
   }
   private touchMove(event: egret.TouchEvent) {
+
     const stageInfo: IStageInfo = {
       stageW: this.stage.stageWidth,
       stageH: this.stage.stageHeight,
@@ -100,6 +119,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
    * @memberof GameScene
    */
   private touchEndHandle() {
+    this.touchFlag = false;
     this.stage.removeEventListener(
       egret.TouchEvent.TOUCH_MOVE,
       this.touchMove,
@@ -137,9 +157,11 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
             StageObjectCache.heroBulletCache.splice(index, 1);
           }
           enemy.life -= item.power;
-          // console.log(enemy.life);
           if (enemy.life <= 0) {
             enemy.state = PlaneState.dispose;
+
+            GameConfig.countScore += enemy.score;
+            this.countScoreTextField.text = GameConfig.countScore.toString();
             enemy.explode();
           }
         }
@@ -152,9 +174,9 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
           enemy.state = this.hero.state = PlaneState.dispose;
           console.log('game over');
           this.dispose();
-
           enemy.explode();
           this.hero.explode();
+
         }
       });
     });
@@ -162,7 +184,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
     // 回收飞机
     for (let i = 0; i < count; i++) {
       const enemy = StageObjectCache.enemyCache[i];
-      if (
+      if ( this.stage &&
         enemy.y > this.stage.stageHeight + enemy.height ||
         enemy.state === PlaneState.nonexistent
       ) {
@@ -191,12 +213,8 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
       this,
     );
     this.addEnemyTimer.start();
-    // 记录下时间
-    // this.timertest = new Date().getTime();
   }
   private addEnemyTimerHandle() {
-
-
     const enemy = this.getEnemy();
     this.addChild(enemy);
     const xMin = 0 - enemy.width / 2;
@@ -207,20 +225,27 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
   }
   private getEnemy(): PlaneBase {
     const number = this.randomRange(1, 100);
-    if(number <50){
+    if(number < 50){
       return this.enemySmallFactory.createPlane();
-    }else if(number <90){
+    }else if(number < 90){
       return this.enemyCenterFactory.createPlane();
+    }else {
+      return this.enemyBigFactory.createPlane();
     }
-    return this.enemySmallFactory.createPlane();
   }
+
   private touchBeginHandle(event: egret.TouchEvent) {
+    if(this.touchFlag){
+      return ;
+    }
+    this.touchFlag = true;
     const stageInfo: IStageInfo = {
       stageW: this.stage.stageWidth,
       stageH: this.stage.stageHeight,
       stageX: event.stageX,
       stageY: event.stageY,
     };
+
     this.hero.setDistance(stageInfo);
     this.stage.addEventListener(
       egret.TouchEvent.TOUCH_MOVE,
@@ -234,6 +259,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
    * @memberof GameScene
    */
   public dispose(): void {
+
     this.removeEventListener(
       HeroInStageAnimationEndEvent.heroInStageAnimationEnd,
       this.heroInStageAnimationEndHandle,
@@ -270,6 +296,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
       this.dispose,
       this,
     );
+    // this.removeChildren();
   }
   /**
    * 回收敌机
@@ -285,6 +312,7 @@ class GameScene extends egret.DisplayObjectContainer implements IDispose {
         Pool.enemyCenterPool.push(enemy);
         break;
       case PlaneType.bigType:
+        Pool.enemyBigPool.push(enemy);
         break;
       default:
         break;

@@ -88,9 +88,6 @@ var Main = (function (_super) {
         egret.lifecycle.onPause = function () {
             egret.ticker.pause();
             Utils.soundStop(_this.bgContent);
-            console.log(StageObjectCache.heroBulletCache.length);
-            console.log(StageObjectCache.enemyCache.length);
-            console.log(Pool.enemySmallPool.length);
         };
         egret.lifecycle.onResume = function () {
             egret.ticker.resume();
@@ -109,16 +106,14 @@ var Main = (function (_super) {
                     case 1:
                         _a.sent();
                         this.bgContent = new BgContent();
+                        this.gameStart = new GameStart();
                         this.gameScene = new GameScene();
+                        this.gameReset = new GameReset();
                         this.createGameScene();
-                        // Pool.enemySmallPool = Utils.test();
-                        // const result = await RES.getResAsync("description_json")
-                        // this.startAnimation(result);
+                        this.addEventListener(GameStartEvent.gameStartEvent, this.gameStartHandle, this);
+                        this.addEventListener(GameOverEvent.gameOverEvent, this.gameOverHandle, this);
                         return [4 /*yield*/, platform.login()];
                     case 2:
-                        // Pool.enemySmallPool = Utils.test();
-                        // const result = await RES.getResAsync("description_json")
-                        // this.startAnimation(result);
                         _a.sent();
                         return [4 /*yield*/, platform.getUserInfo()];
                     case 3:
@@ -127,6 +122,27 @@ var Main = (function (_super) {
                 }
             });
         });
+    };
+    Main.prototype.gameOverHandle = function (event) {
+        this.removeChild(this.bgContent);
+        this.removeChild(this.gameScene);
+        this.addChild(this.gameReset);
+    };
+    Main.prototype.gameStartHandle = function () {
+        GameConfig.countScore = 0;
+        StageObjectCache.heroBulletCache = [];
+        StageObjectCache.enemyCache = [];
+        if (this.gameReset.parent) {
+            this.removeChild(this.gameReset);
+        }
+        if (this.bgContent.parent) {
+            this.removeChild(this.bgContent);
+        }
+        if (this.gameScene.parent) {
+            this.removeChild(this.gameScene);
+        }
+        this.addChild(this.bgContent);
+        this.addChild(this.gameScene);
     };
     Main.prototype.loadResource = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -162,22 +178,24 @@ var Main = (function (_super) {
      * Create a game scene
      */
     Main.prototype.createGameScene = function () {
-        this.addChild(this.bgContent);
-        this.addChild(this.gameScene);
+        // this.addChild(this.bgContent);
+        // this.addChild(this.gameScene);
+        this.addChild(this.gameStart);
         this.addEventListener(HeroInStageRunBgEvent.HeroInStageRunBgEvent, this.HeroInStageRunBgEventHandle, this);
-        // setTimeout(() => {
-        //   this.removeChild(this.gameScene);
-        // }, 5000);
     };
     /**
- * hero进入场景的处理事件
- * @param event egret.Event
- */
+     * hero进入场景的处理事件
+     * @param event egret.Event
+     */
     Main.prototype.HeroInStageRunBgEventHandle = function (event) {
         event.stopImmediatePropagation();
-        console.log('runBg');
+        // console.log(6666666);
         this.bgContent.runBg();
-        this.removeEventListener(HeroInStageRunBgEvent.HeroInStageRunBgEvent, this.HeroInStageRunBgEventHandle, this);
+        // this.removeEventListener(
+        //   HeroInStageRunBgEvent.HeroInStageRunBgEvent,
+        //   this.HeroInStageRunBgEventHandle,
+        //   this,
+        // );
     };
     /**
      * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。

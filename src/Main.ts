@@ -30,7 +30,9 @@
 class Main extends egret.DisplayObjectContainer {
 
   private bgContent: BgContent;
+  private gameStart: GameStart;
   private gameScene: GameScene;
+  private gameReset: GameReset;
 
   // private enemySmall: PlaneBase;
   public constructor() {
@@ -65,16 +67,37 @@ class Main extends egret.DisplayObjectContainer {
 
 
     this.bgContent = new BgContent();
+    this.gameStart = new GameStart();
     this.gameScene = new GameScene();
+    this.gameReset = new GameReset();
+
     this.createGameScene();
-    // Pool.enemySmallPool = Utils.test();
-    // const result = await RES.getResAsync("description_json")
-    // this.startAnimation(result);
+    this.addEventListener(GameStartEvent.gameStartEvent,this.gameStartHandle,this);
+    this.addEventListener(GameOverEvent.gameOverEvent,this.gameOverHandle,this);
     await platform.login();
     const userInfo = await platform.getUserInfo();
-    // console.log(userInfo);
   }
-
+  private gameOverHandle(event: egret.Event) {
+    this.removeChild(this.bgContent);
+    this.removeChild(this.gameScene);
+    this.addChild(this.gameReset);
+  }
+  private gameStartHandle() {
+    GameConfig.countScore = 0;
+    StageObjectCache.heroBulletCache= [];
+    StageObjectCache.enemyCache= [];
+    if(this.gameReset.parent){
+      this.removeChild(this.gameReset);
+    }
+    if(this.bgContent.parent){
+      this.removeChild(this.bgContent);
+    }
+    if(this.gameScene.parent){
+      this.removeChild(this.gameScene);
+    }
+    this.addChild(this.bgContent);
+    this.addChild(this.gameScene);
+  }
   private async loadResource() {
     try {
       const loadingView = new LoadingUI();
@@ -94,30 +117,28 @@ class Main extends egret.DisplayObjectContainer {
    * Create a game scene
    */
   private createGameScene() {
-    this.addChild(this.bgContent);
-    this.addChild(this.gameScene);
+    // this.addChild(this.bgContent);
+    // this.addChild(this.gameScene);
+    this.addChild(this.gameStart);
     this.addEventListener(
       HeroInStageRunBgEvent.HeroInStageRunBgEvent,
       this.HeroInStageRunBgEventHandle,
       this,
     );
-    // setTimeout(() => {
-    //   this.removeChild(this.gameScene);
-    // }, 5000);
   }
-      /**
+  /**
    * hero进入场景的处理事件
    * @param event egret.Event
    */
   private HeroInStageRunBgEventHandle(event: egret.Event) {
     event.stopImmediatePropagation();
-    console.log('runBg');
+    // console.log(6666666);
     this.bgContent.runBg();
-    this.removeEventListener(
-      HeroInStageRunBgEvent.HeroInStageRunBgEvent,
-      this.HeroInStageRunBgEventHandle,
-      this,
-    );
+    // this.removeEventListener(
+    //   HeroInStageRunBgEvent.HeroInStageRunBgEvent,
+    //   this.HeroInStageRunBgEventHandle,
+    //   this,
+    // );
   }
 
   /**

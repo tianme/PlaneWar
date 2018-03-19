@@ -10,20 +10,25 @@ class Hero extends PlaneBase implements IDispose {
   public speed: number;
   public explodeTimer: egret.Timer;
   public planeType: PlaneType;
+  public score;
+  private gameOverEvent: egret.Event;
   constructor(armor: number) {
     super();
+    this.score = 0;
+    this.gameOverEvent = new GameOverEvent(GameOverEvent.gameOverEvent);
     const shp:egret.Shape= new egret.Shape();
-    this.life = GameConfig.hero.life;
-    this.state = PlaneState.existing;
+    this.hero = new egret.Bitmap();
     this.speed = 0;
     this.blowUpTextureList = new Array<egret.Texture>();
     this.planeType = PlaneType.general;
-    this.init();
-    this.addChild(this.hero);
+
     this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddToStage, this);
     this.addEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
   }
   private onAddToStage(event: egret.TouchEvent): void {
+    // console.log('hero in stage');
+    this.init();
+    this.addChild(this.hero);
     // 初始位置
     this.initPosition();
     // 切换
@@ -35,6 +40,8 @@ class Hero extends PlaneBase implements IDispose {
    * 初始化
    */
   private init(): void {
+    this.life = GameConfig.hero.life;
+    this.state = PlaneState.existing;
     // 初始化distance
     this.distance = {
       stageW: 0,
@@ -51,7 +58,7 @@ class Hero extends PlaneBase implements IDispose {
       this.blowUpTextureList.push(Utils.createBitmapByName(item));
     });
     this.explodeTimer = new egret.Timer(200, 4)
-    this.hero = new egret.Bitmap();
+
     this.hero.texture = this.textureList[0];
     this.timer = new egret.Timer(GameConfig.hero.planeToggleTimeSpan, GameConfig.hero.planeToggleCount);
     this.width = this.hero.width;
@@ -116,13 +123,13 @@ class Hero extends PlaneBase implements IDispose {
     egret.Tween.get(this)
       .to({y}, GameConfig.hero.inStageAnimationTime, egret.Ease.sineInOut)
       .call(() => {
-        console.log('hero背景执行');
+        // console.log('hero背景执行');
         // 动画结束发送事件
         this.dispatchEvent(heroInStageRunBgEvent);
       })
       .to({y: stageH - 200}, GameConfig.hero.inStageAnimationTimeEnd, egret.Ease.sineInOut)
       .call(() => {
-        console.log('hero动画全部结束');
+        // console.log('hero动画全部结束');
         this.dispatchEvent(heroInStageAnimationEnd);
       });
   }
@@ -166,18 +173,22 @@ class Hero extends PlaneBase implements IDispose {
     this.hero.texture = this.textureList[index];
   }
   public dispose(): void {
-    console.log('hero.ts dispose');
+    // console.log('hero.ts dispose');
+    this.gameOverEvent.data = GameConfig.countScore;
+    this.dispatchEvent(this.gameOverEvent);
     this.removeEventListener(
       egret.TimerEvent.TIMER,
       this.toggleHeroBitMap,
       this,
     );
-    this.removeEventListener(
-      egret.Event.ADDED_TO_STAGE,
-      this.onAddToStage,
-      this,
-    );
-    this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
+    // this.removeEventListener(
+    //   egret.Event.ADDED_TO_STAGE,
+    //   this.onAddToStage,
+    //   this,
+    // );
+    this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER, this.explodeHandle, this);
+    this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
+    // this.removeEventListener(egret.Event.REMOVED_FROM_STAGE, this.dispose, this);
 
   }
   public explode() {
@@ -195,12 +206,13 @@ class Hero extends PlaneBase implements IDispose {
     this.state = PlaneState.nonexistent;
     this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER, this.explodeHandle, this);
     this.explodeTimer.removeEventListener(egret.TimerEvent.TIMER_COMPLETE, this.timerCompleteHandle, this);
-    this.dispose();
+
     if(this.parent){
       this.parent.removeChild(this);
     }
+    this.dispose();
   }
   public reset() {
-
+    this.init();
   }
 }

@@ -17,6 +17,7 @@ var EnemySmallFactory = (function (_super) {
         // 通过enemySmallPool中拿enemySmall
         var enemySmall = Pool.enemySmallPool.shift();
         if (!enemySmall) {
+            // console.log('小飞机');
             return new EnemySmall();
         }
         return enemySmall;

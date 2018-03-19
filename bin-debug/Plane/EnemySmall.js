@@ -13,6 +13,7 @@ var EnemySmall = (function (_super) {
     function EnemySmall() {
         var _this = _super.call(this) || this;
         _this.init();
+        _this.score = 500;
         _this.planeType = PlaneType.smallType;
         _this.textureList = new Array();
         for (var i = 0; i < 4; i++) {
