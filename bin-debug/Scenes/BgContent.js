@@ -57,7 +57,11 @@ var BgContent = (function (_super) {
     };
     BgContent.prototype.play = function () {
         this.soundChannel = this.bgSound.play(this.channelPosition, -1);
+<<<<<<< HEAD
         this.soundChannel.volume = .3;
+=======
+        this.soundChannel.volume = .1;
+>>>>>>> master
     };
     BgContent.prototype.stop = function () {
         if (!this.soundChannel) {

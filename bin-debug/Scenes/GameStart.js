@@ -24,6 +24,15 @@ var GameStart = (function (_super) {
         this.shape.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
         this.shape.graphics.endFill();
         this.addChild(this.shape);
+<<<<<<< HEAD
+=======
+        var tip = new egret.TextField();
+        tip.text = '点击开始后会有游戏音乐响起，如不需要听背景音乐请先关闭音量';
+        tip.x = this.stage.stageWidth / 2 - tip.width / 2;
+        tip.y = this.stage.stageHeight * 0.4 + tip.height / 2;
+        tip.textColor = 0xFF0000;
+        this.addChild(tip);
+>>>>>>> master
         this.startBtn.touchEnabled = true;
         this.startBtn.addEventListener(egret.TouchEvent.TOUCH_TAP, this.touchTapHandle, this);
         this.startBtn.text = '开始';

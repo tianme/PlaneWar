@@ -25,7 +25,12 @@ var HeroBullet = (function (_super) {
         return _this;
     }
     HeroBullet.prototype.play = function () {
+<<<<<<< HEAD
         this.bulletSound.play(this.channelPosition, 1);
+=======
+        this.soundChannel = this.bulletSound.play(this.channelPosition, 1);
+        this.soundChannel.volume = 0.1;
+>>>>>>> master
     };
     HeroBullet.prototype.stop = function () {
         if (!this.soundChannel) {
