@@ -19,8 +19,10 @@ class GameStart extends egret.DisplayObjectContainer {
     this.shape.graphics.endFill();
     this.addChild(this.shape);
     const tip = new egret.TextField();
-    tip.text = '点击开始后会有游戏音乐响起，如不需要听背景音乐请先关闭音量';
-    tip.x = this.stage.stageWidth /2 - tip.width/2;
+    tip.text = '点击开始后会有游戏音乐响起，如不需要听背景音乐请先关闭音量。';
+    tip.width = this.stage.stageWidth * 0.5;
+    tip.lineSpacing = 10;
+    tip.x = this.stage.stageWidth / 2 - tip.width / 2;
     tip.y = this.stage.stageHeight * 0.4 + tip.height / 2;
     tip.textColor = 0xFF0000;
     this.addChild(tip);
@@ -31,7 +33,7 @@ class GameStart extends egret.DisplayObjectContainer {
     // this.resetBtn.borderColor = 0x000000;
     // this.resetBtn.border = true;
 
-    this.startBtn.x = this.stage.stageWidth /2 - this.startBtn.width/2;
+    this.startBtn.x = this.stage.stageWidth / 2 - this.startBtn.width / 2;
     this.startBtn.y = this.stage.stageHeight * 0.7 + this.startBtn.height / 2;
     this.addChild(this.startBtn);
 
