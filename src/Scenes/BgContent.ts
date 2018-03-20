@@ -55,11 +55,14 @@ class BgContent extends egret.DisplayObjectContainer
   }
 
   public play() {
+    if(!this.parent){
+      return;
+    }
     this.soundChannel = this.bgSound.play(this.channelPosition, -1);
     this.soundChannel.volume = .1;
   }
   public stop() {
-    if (!this.soundChannel) {
+    if (!this.parent || !this.soundChannel) {
       return;
     }
     // 记录背景音乐播放的位置
