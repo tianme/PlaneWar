@@ -1,0 +1,186 @@
+{
+  "groups": [
+    {
+      "keys":
+        "background,hero1,hero2,bullet1,bullet2,enemy1,enemy1_down1,enemy1_down2,enemy1_down3,enemy1_down4,hero_blowup_n1,hero_blowup_n2,hero_blowup_n3,hero_blowup_n4,enemy2,enemy2_hit,enemy2_down1,enemy2_down2,enemy2_down3,enemy2_down4,enemy3_n1,enemy3_n2,enemy3_hit,enemy3_down1,enemy3_down2,enemy3_down3,enemy3_down4,enemy3_down5,enemy3_down6",
+      "name": "images"
+    },
+    {
+      "keys": "bgsound,bullet,enemy1_down,enemy2_down,enemy3_down",
+      "name": "sounds"
+    }
+  ],
+  "resources": [
+    {
+      "name": "background",
+      "type": "image",
+      "url": "assets/background.png"
+    },
+    {
+      "name": "hero1",
+      "type": "image",
+      "url": "assets/hero1.png"
+    },
+    {
+      "name": "hero2",
+      "type": "image",
+      "url": "assets/hero2.png"
+    },
+    {
+      "name": "hero_blowup_n1",
+      "type": "image",
+      "url": "assets/hero_blowup_n1.png"
+    },
+    {
+      "name": "hero_blowup_n2",
+      "type": "image",
+      "url": "assets/hero_blowup_n2.png"
+    },
+    {
+      "name": "hero_blowup_n3",
+      "type": "image",
+      "url": "assets/hero_blowup_n3.png"
+    },
+    {
+      "name": "hero_blowup_n4",
+      "type": "image",
+      "url": "assets/hero_blowup_n4.png"
+    },
+    {
+      "name": "enemy1",
+      "type": "image",
+      "url": "assets/enemy1.png"
+    },
+    {
+      "name": "enemy1_down1",
+      "type": "image",
+      "url": "assets/enemy1_down1.png"
+    },
+    {
+      "name": "enemy1_down2",
+      "type": "image",
+      "url": "assets/enemy1_down2.png"
+    },
+    {
+      "name": "enemy1_down3",
+      "type": "image",
+      "url": "assets/enemy1_down3.png"
+    },
+    {
+      "name": "enemy1_down4",
+      "type": "image",
+      "url": "assets/enemy1_down4.png"
+    },
+    {
+      "name": "bgsound",
+      "type": "sound",
+      "url": "sound/game_music.mp3"
+    },
+    {
+      "name": "bullet1",
+      "type": "image",
+      "url": "assets/bullet1.png"
+    },
+    {
+      "name": "bullet2",
+      "type": "image",
+      "url": "assets/bullet2.png"
+    },
+    {
+      "name": "bullet",
+      "type": "sound",
+      "url": "sound/bullet.mp3"
+    },
+    {
+      "name": "enemy1_down",
+      "type": "sound",
+      "url": "sound/enemy1_down.mp3"
+    },
+    {
+      "name": "enemy2",
+      "type": "image",
+      "url": "assets/enemy2.png"
+    },
+    {
+      "name": "enemy2_hit",
+      "type": "image",
+      "url": "assets/enemy2_hit.png"
+    },
+    {
+      "name": "enemy2_down1",
+      "type": "image",
+      "url": "assets/enemy2_down1.png"
+    },
+    {
+      "name": "enemy2_down2",
+      "type": "image",
+      "url": "assets/enemy2_down2.png"
+    },
+    {
+      "name": "enemy2_down3",
+      "type": "image",
+      "url": "assets/enemy2_down3.png"
+    },
+    {
+      "name": "enemy2_down4",
+      "type": "image",
+      "url": "assets/enemy2_down4.png"
+    },
+    {
+      "name": "enemy2_down",
+      "type": "sound",
+      "url": "sound/enemy2_down.mp3"
+    },
+    {
+      "name": "enemy3_n1",
+      "type": "image",
+      "url": "assets/enemy3_n1.png"
+    },
+    {
+      "name": "enemy3_n2",
+      "type": "image",
+      "url": "assets/enemy3_n2.png"
+    },
+    {
+      "name": "enemy3_hit",
+      "type": "image",
+      "url": "assets/enemy3_hit.png"
+    },
+    {
+      "name": "enemy3_down1",
+      "type": "image",
+      "url": "assets/enemy3_down1.png"
+    },
+    {
+      "name": "enemy3_down2",
+      "type": "image",
+      "url": "assets/enemy3_down2.png"
+    },
+    {
+      "name": "enemy3_down3",
+      "type": "image",
+      "url": "assets/enemy3_down3.png"
+    },
+    {
+      "name": "enemy3_down4",
+      "type": "image",
+      "url": "assets/enemy3_down4.png"
+    },
+    {
+      "name": "enemy3_down5",
+      "type": "image",
+      "url": "assets/enemy3_down5.png"
+    },
+    {
+      "name": "enemy3_down6",
+      "type": "image",
+      "url": "assets/enemy3_down6.png"
+    },
+    {
+      "name": "enemy3_down",
+      "type": "sound",
+      "url": "sound/enemy3_down.mp3"
+    }
+
+  ]
+}
